@@ -1,26 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Github, ExternalLink } from 'lucide-react';
+import { Github } from 'lucide-react';
 
 const projects = [
   {
     title: 'CharityGift',
     description: 'Plateforme qui regroupe des associations caritatives pour faciliter les dons',
     tech: ['JavaScript', 'HTML', 'CSS'],
-    github: 'https://github.com/M4xxes'
+    github: 'https://github.com/M4xxes/charityGift.git'
   },
   {
     title: 'Groupie Tracker',
     description: 'Jeux musicaux : blind test, petit bac musical, etc.',
     tech: ['HTML', 'GO', 'JavaScript'],
-    github: 'https://github.com/M4xxes'
+    github: 'https://github.com/Decorentin/groupie-tracker.git'
   },
   {
     title: 'Projet Forum',
     description: 'Forum pour motards afin d\'echanger, vendre et partager leur passion',
     tech: ['HTML', 'CSS', 'MariaDB'],
-    github: 'https://github.com/M4xxes'
+    github: 'https://github.com/B1-Info-23-24/projet-forum.git'
   }
 ];
 
@@ -70,21 +70,19 @@ const Projects = () => {
                     ))}
                   </div>
                 </div>
-                <div className="flex gap-4 md:flex-col">
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-blue-500 transition-colors"
-                  >
-                    <Github size={24} />
-                  </a>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-blue-500 transition-colors"
-                  >
-                    <ExternalLink size={24} />
-                  </a>
+
+                <div className="flex items-center md:flex-col">
+                  <div className="flex flex-col items-center text-sm text-gray-400 hover:text-blue-500 transition-colors">
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex flex-col items-center"
+                    >
+                      <Github size={24} />
+                      <span className="mt-1 text-xs">GitHub</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -95,4 +93,4 @@ const Projects = () => {
   );
 };
 
-export default Projects
+export default Projects;
