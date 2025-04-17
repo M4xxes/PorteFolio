@@ -33,41 +33,84 @@ const Contact = () => {
             pour discuter de vos projets.
           </p>
 
-          <div className="flex justify-center gap-8 mb-12">
+          <div className="flex justify-center gap-12 mb-12">
             <a
               href="https://github.com/M4xxes"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-blue-500 transition-colors"
+              className="flex flex-col items-center text-gray-400 hover:text-blue-500 transition-colors"
             >
               <Github size={28} />
+              <span className="mt-1 text-xs">GitHub</span>
             </a>
             <a
               href="https://www.linkedin.com/in/maxime-pero-b320a3356/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-blue-500 transition-colors"
+              className="flex flex-col items-center text-gray-400 hover:text-blue-500 transition-colors"
             >
               <Linkedin size={28} />
+              <span className="mt-1 text-xs">LinkedIn</span>
             </a>
             <a
               href="mailto:maximepero12@gmail.com"
-              className="text-gray-400 hover:text-blue-500 transition-colors"
+              className="flex flex-col items-center text-gray-400 hover:text-blue-500 transition-colors"
             >
               <Mail size={28} />
+              <span className="mt-1 text-xs">Mail</span>
             </a>
           </div>
 
-          <a
-            href="mailto:maximepero12@gmail.com"
-            className="inline-block px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-medium transition-colors duration-300"
+          <form
+            action="mailto:maximepero12@gmail.com"
+            method="POST"
+            encType="text/plain"
+            className="space-y-6 text-left"
           >
-            Envoyer un email
-          </a>
+            <div>
+              <label htmlFor="name" className="block text-gray-300 mb-2">Nom</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                className="w-full p-3 rounded-md bg-[#1a1a1a] border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block text-gray-300 mb-2">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                className="w-full p-3 rounded-md bg-[#1a1a1a] border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="message" className="block text-gray-300 mb-2">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                rows={5}
+                required
+                className="w-full p-3 rounded-md bg-[#1a1a1a] border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md transition-colors duration-300"
+            >
+              Envoyer le message
+            </button>
+          </form>
         </motion.div>
       </div>
     </section>
   );
 };
 
-export default Contact
+export default Contact;
