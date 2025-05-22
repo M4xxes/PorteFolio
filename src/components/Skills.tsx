@@ -1,26 +1,25 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
 const skills = [
   {
     category: "Languages",
-    items: ["JavaScript", "TypeScript", "Python", "SQL"],
+    items: ["JavaScript", "TypeScript", "SQL"],
     color: "from-blue-500 to-blue-600"
   },
   {
     category: "Frontend",
-    items: ["React", "Angular", "HTML5", "CSS3/Sass", "Tailwind CSS"],
+    items: ["React", "Angular", "HTML5",  "Tailwind CSS"],
     color: "from-purple-500 to-purple-600"
   },
   {
     category: "Backend",
-    items: ["Node.js", "Express", "Django", "PostgreSQL"],
+    items: ["Node.js"],
     color: "from-green-500 to-green-600"
   },
   {
     category: "Outils",
-    items: ["Git", "Docker", "VS Code", "Figma"],
+    items: ["Git", "VS Code", "Figma"],
     color: "from-pink-500 to-pink-600"
   }
 ];

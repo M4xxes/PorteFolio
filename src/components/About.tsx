@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
@@ -27,12 +26,12 @@ const About = () => {
           className="space-y-6 text-gray-300"
         >
           <p className="text-lg">
-            Je suis un développeur web passionné par la création d'expériences numériques exceptionnelles.
-            Mon parcours m'a permis de maîtriser un large éventail de technologies modernes et de bonnes pratiques
+            Je suis un développeur web passionné par l'informatique et la technologie.
+            Mon parcours m'a permis de maîtriser un éventail de technologies modernes et de bonnes pratiques
             de développement.
           </p>
           <p className="text-lg">
-            Spécialisé dans le développement full stack, je combine expertise technique et créativité pour
+            Spécialisé dans le développement Frontend, je combine expertise technique et créativité pour
             concevoir des solutions web innovantes et performantes.
           </p>
           <p className="text-lg">

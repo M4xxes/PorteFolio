@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 const Hero = () => {
@@ -69,7 +68,7 @@ const Hero = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="text-lg md:text-xl text-gray-400 max-w-2xl mb-12"
         >
-          Développeur Full Stack spécialisé dans la création d'applications web performantes et élégantes.
+          Développeur FrontEnd spécialisé dans la création d'applications web modernes.
           Je transforme des idées en solutions digitales innovantes.
         </motion.p>
         
