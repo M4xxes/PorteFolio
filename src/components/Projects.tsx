@@ -7,19 +7,19 @@ const projects = [
     title: 'CharityGift',
     description: 'Plateforme qui regroupe des associations caritatives pour faciliter les dons',
     tech: ['HTML', 'CSS', 'JavaScript'],
-    github: 'https://github.com/M4xxes'
+    github: 'https://github.com/M4xxes/charityGift'
   },
   {
     title: 'Groupie Tracker',
     description: 'Jeux musicaux : blind test, petit bac musical, etc.',
     tech: ['GO', 'HTML', 'JavaScript'],
-    github: 'https://github.com/M4xxes'
+    github: 'https://github.com/Decorentin/groupie-tracker'
   },
   {
     title: 'Projet Forum',
     description: 'Forum pour motards afin d\'echanger, vendre et partager leur passion',
     tech: ['HTML', 'CSS', 'MariaDB'],
-    github: 'https://github.com/M4xxes'
+    github: 'https://github.com/B1-Info-23-24/projet-forum'
   }
 ];
 
