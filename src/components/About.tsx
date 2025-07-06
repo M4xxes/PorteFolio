@@ -31,8 +31,7 @@ const About = () => {
             de développement.
           </p>
           <p className="text-lg">
-            Spécialisé dans le développement Frontend, je combine expertise technique et créativité pour
-            concevoir des solutions web innovantes et performantes.
+          Spécialisé en développement web full stack, je combine expertise technique et sens de l’interface pour concevoir des applications web complètes, performantes et centrées utilisateur.
           </p>
           <p className="text-lg">
             Mon approche est centrée sur la qualité du code, l'expérience utilisateur et l'innovation

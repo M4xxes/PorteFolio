@@ -3,7 +3,7 @@
 Bienvenue sur mon portfolio personnel !  
 Il présente mes projets, compétences et expériences en développement web.
 
-🔗 [Voir en ligne](https://m4xxes.netlify.app/)
+🔗 [Voir en ligne](https://portefoliomaxxes.netlify.app/)
 
 ---
 

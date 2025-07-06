@@ -14,7 +14,7 @@ const skills = [
   },
   {
     category: "Backend",
-    items: ["Node.js"],
+    items: ["Node.js", "Express", "MySQL"],
     color: "from-green-500 to-green-600"
   },
   {
