@@ -2,59 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes gradient-x {
-  0%, 100% {
-    background-size: 200% 200%;
-    background-position: left center;
-  }
-  50% {
-    background-size: 200% 200%;
-    background-position: right center;
-  }
+/* ─── Variables de thème ─────────────────────────────────────────────────── */
+/* Lues par Tailwind via tailwind.config.js (bg, surface, elevated, etc.)     */
+
+:root {
+  --bg:       #F5F4FF;
+  --surface:  #FFFFFF;
+  --elevated: #EDEBF8;
+  --border:   #DDD9F2;
+  --text:     #1A1A2E;
+  --muted:    #6B6B8A;
 }
 
-.animate-gradient-x {
-  animation: gradient-x 15s ease infinite;
+.dark {
+  --bg:       #0C0C14;
+  --surface:  #13131F;
+  --elevated: #1C1C2A;
+  --border:   #2A2A3D;
+  --text:     #EAE8F5;
+  --muted:    #787896;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
+/* ─── Base ────────────────────────────────────────────────────────────────── */
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
+  /* Transition fluide lors du changement de thème */
+  transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
 }
 
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #2A2A3D; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #8B5CF6; }
+
+/* ─── Sélection de texte ─────────────────────────────────────────────────── */
+
+::selection { background: rgba(139, 92, 246, 0.28); color: #EAE8F5; }
+
+/* ─── Focus visible (accessibilité clavier) ─────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid #8B5CF6;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  border-radius: 5px;
-}
+/* ─── Typographie ────────────────────────────────────────────────────────── */
 
-::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
-}
-
-/* Selection color */
-::selection {
-  background: #3b82f6;
-  color: white;
-}
+h1, h2, h3, h4, h5, h6 { line-height: 1.15; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }

@@ -1,32 +1,37 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import Hero from './components/Hero';
-import About from './components/About';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import Contact from './components/Contact';
+import { ThemeProvider } from './context/ThemeContext'
+import { Navbar } from './components/layout/Navbar'
+import { Footer } from './components/layout/Footer'
+import { Hero } from './components/sections/Hero'
+import { About } from './components/sections/About'
+import { Skills } from './components/sections/Skills'
+import { Projects } from './components/sections/Projects'
+import { Experience } from './components/sections/Experience'
+import { Education } from './components/sections/Education'
+import { Interests } from './components/sections/Interests'
+import { Contact } from './components/sections/Contact'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#111827] to-[#0a0a0a] text-white">
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
+    <ThemeProvider>
+      {/* Fond global géré par les variables CSS dans index.css */}
+      <div className="min-h-screen bg-bg text-c-text font-sans">
+        <Navbar />
+
+        <main id="main-content">
           <Hero />
           <About />
           <Skills />
           <Projects />
+          <Experience />
+          <Education />
+          <Interests />
           <Contact />
-          
-          <footer className="py-8 text-center text-sm text-gray-400">
-            <p>© 2024 Maxime Pero. Tous droits réservés.</p>
-          </footer>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
+        </main>
+
+        <Footer />
+      </div>
+    </ThemeProvider>
+  )
 }
 
-export default App;
+export default App
