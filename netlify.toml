@@ -1,6 +1,8 @@
 [build]
-  command   = "npm run build"
-  publish   = "dist"
+  command = "npm run build"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [[headers]]
   for = "/*"
@@ -8,9 +10,3 @@
     X-Frame-Options        = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy        = "strict-origin-when-cross-origin"
-
-# SPA fallback (utile si on ajoute React Router plus tard)
-[[redirects]]
-  from   = "/*"
-  to     = "/index.html"
-  status = 200
