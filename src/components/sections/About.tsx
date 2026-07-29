@@ -1,130 +1,140 @@
-import { useState } from 'react'
-import { GraduationCap, Award, Globe, User } from 'lucide-react'
+'use client'
+
+import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { SectionWrapper, SectionHeader } from '../ui/SectionWrapper'
+import { education } from '@/lib/data/education'
+import { projects } from '@/lib/data/projects'
+import { skillCategories } from '@/lib/data/skills'
+import { site, easing } from '@/lib/constants'
+import { AnimatedCounter } from '@/components/ui/AnimatedCounter'
 
-// Statistiques clés affichées sous forme de compteurs
+const yearsExperience = new Date().getFullYear() - site.yearStarted
+const totalSkills = skillCategories.reduce((acc, c) => acc + c.skills.length, 0)
+
 const stats = [
-  { value: '3ème', label: 'année de Bachelor', icon: GraduationCap },
-  { value: 'Niv. 6', label: 'RNCP visé', icon: Award },
-  { value: '2', label: 'langues', icon: Globe },
+  { label: 'Années de formation', value: Math.max(yearsExperience, 1), suffix: '+' },
+  { label: 'Projets réalisés', value: projects.length, suffix: '' },
+  { label: 'Technologies maîtrisées', value: totalSkills, suffix: '+' },
 ]
 
-// Badges de langues
-const languages = [
-  { lang: 'Français', level: 'Courant', flag: '🇫🇷' },
-  { lang: 'Anglais', level: 'Intermédiaire', flag: '🇬🇧' },
-]
-
-function ProfilePhotoSmall() {
-  const [imgError, setImgError] = useState(false)
-  return (
-    <div className="relative w-full aspect-square max-w-xs mx-auto">
-      {/* Bordure décorative décalée */}
-      <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-2xl border border-accent/25" />
-      <div className="relative z-10 w-full h-full rounded-2xl overflow-hidden border border-c-border">
-        {!imgError ? (
-          <img
-            src="/assets/profile.jpg"
-            alt="Maxime Pero"
-            className="w-full h-full object-cover"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-accent/20 via-accent/8 to-elevated
-                          flex flex-col items-center justify-center gap-3">
-            <User size={48} className="text-accent/40" />
-            <span className="text-[10px] font-mono text-accent/30 tracking-widest uppercase">profile.jpg</span>
-          </div>
-        )}
-      </div>
-      {/* Tag flottant */}
-      <div className="absolute -bottom-4 -right-4 z-20 px-3 py-1.5 rounded-lg bg-surface border border-c-border
-                      shadow-card text-xs font-medium text-c-text">
-        Ynov Campus · Lyon
-      </div>
-    </div>
-  )
+const fadeUp = {
+  hidden: { opacity: 0, y: 32 },
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.8, ease: easing.smooth },
+  }),
 }
 
 export function About() {
   return (
-    <SectionWrapper id="about" className="bg-surface">
-      <div className="max-w-6xl mx-auto px-5 md:px-8">
-        <SectionHeader number="01" title="À propos" />
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Colonne photo */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+    <section id="about" className="relative z-20 bg-bg px-6 py-32 sm:px-10 lg:px-20">
+      <div className="mx-auto grid max-w-6xl gap-16 lg:grid-cols-[0.85fr_1.15fr] lg:gap-24">
+        {/* Colonne gauche : photo + stats */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-15%' }}
+          variants={fadeUp}
+          className="flex flex-col gap-10 lg:sticky lg:top-32 lg:self-start"
+        >
+          <div
+            data-cursor-hover
+            className="group relative aspect-[4/5] w-full max-w-sm overflow-hidden transition-[border-radius] duration-700 ease-out"
+            style={{ borderRadius: '58% 42% 38% 62% / 58% 36% 64% 42%' }}
           >
-            <ProfilePhotoSmall />
-          </motion.div>
-
-          {/* Colonne texte */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="flex flex-col gap-6"
-          >
-            <div className="space-y-4 text-c-muted leading-relaxed text-sm md:text-base">
-              <p>
-                Je suis <span className="text-c-text font-medium">Maxime Pero</span>, étudiant en 3ème année
-                de Bachelor Informatique à{' '}
-                <span className="text-accent">Ynov Campus Lyon</span>. Je prépare la certification{' '}
-                <span className="text-c-text font-medium">RNCP36463</span> — Concepteur Développeur
-                d'Applications Numériques, Niveau 6.
-              </p>
-              <p>
-                Mon quotidien tourne autour du développement web full-stack : interfaces React soignées
-                côté front, APIs Node.js robustes côté back. En parallèle, je m'investis dans le
-                développement mobile avec <span className="text-accent-light">Flutter / Dart</span> pour
-                construire des apps iOS natives.
-              </p>
-              <p>
-                Au-delà du code, je suis passionné par le sport mécanique (moto sportive), la musique
-                (R&B, rock, metal, funk) et le fitness. Ces disciplines m'apportent rigueur,
-                persévérance et équilibre.
-              </p>
+            <div className="absolute inset-0 origin-center scale-105 transition-transform duration-700 ease-out group-hover:scale-[1.15] group-hover:rotate-2">
+              <Image
+                src={site.photoUrl}
+                alt={site.name}
+                fill
+                sizes="(min-width: 1024px) 24rem, 80vw"
+                className="object-cover grayscale-[15%] transition-[filter] duration-700 group-hover:grayscale-0"
+                priority
+              />
             </div>
+            <div className="absolute inset-0 bg-accent opacity-0 mix-blend-color transition-opacity duration-700 group-hover:opacity-25" />
+            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-border-soft" />
+          </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 py-6 border-y border-c-border">
-              {stats.map(({ value, label, icon: Icon }) => (
-                <div key={label} className="flex flex-col items-center text-center gap-1">
-                  <Icon size={18} className="text-accent mb-1" />
-                  <span className="font-serif text-xl font-bold text-c-text">{value}</span>
-                  <span className="text-[11px] text-c-muted leading-tight">{label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Langues */}
-            <div>
-              <p className="text-xs font-semibold tracking-widest uppercase text-c-muted mb-3">Langues</p>
-              <div className="flex gap-3 flex-wrap">
-                {languages.map(({ lang, level, flag }) => (
-                  <div
-                    key={lang}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-elevated border border-c-border"
-                  >
-                    <span className="text-base">{flag}</span>
-                    <div>
-                      <p className="text-xs font-medium text-c-text">{lang}</p>
-                      <p className="text-[10px] text-c-muted">{level}</p>
-                    </div>
-                  </div>
-                ))}
+          <dl className="grid grid-cols-3 gap-6 border-t border-border-soft pt-8">
+            {stats.map((stat) => (
+              <div key={stat.label}>
+                <dt className="sr-only">{stat.label}</dt>
+                <dd className="font-serif text-4xl text-fg">
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                </dd>
+                <dd className="mt-2 font-sans text-xs uppercase tracking-wide text-fg-muted">
+                  {stat.label}
+                </dd>
               </div>
-            </div>
+            ))}
+          </dl>
+        </motion.div>
+
+        {/* Colonne droite : bio + timeline */}
+        <div className="flex flex-col gap-16">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-15%' }}
+            variants={fadeUp}
+          >
+            <span className="font-sans text-xs uppercase tracking-[0.4em] text-accent">
+              À propos
+            </span>
+            <h2 className="mt-4 font-serif text-4xl leading-tight text-fg sm:text-5xl">
+              Développeur full-stack, curieux par nature.
+            </h2>
+            <p className="mt-6 max-w-xl font-sans text-base leading-relaxed text-fg-muted">
+              Actuellement en 3ème année de Bachelor Informatique à Ynov Campus Lyon,
+              je me spécialise dans le développement web full-stack. J&apos;aime autant
+              soigner une interface au pixel près que résoudre des problèmes techniques
+              côté serveur — avec une préférence pour les projets où le design et
+              l&apos;ingénierie se rencontrent.
+            </p>
+            <p className="mt-4 max-w-xl font-sans text-base leading-relaxed text-fg-muted">
+              Autonome, rigoureux et toujours en veille technologique, j&apos;ai eu
+              l&apos;occasion de travailler sur des projets clients réels — d&apos;un
+              site vitrine à une interface de supervision industrielle.
+            </p>
           </motion.div>
+
+          <div className="relative flex flex-col gap-10 border-l border-border-soft pl-8">
+            {education.map((item, i) => (
+              <motion.div
+                key={item.id}
+                custom={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-10%' }}
+                variants={fadeUp}
+                className="relative"
+              >
+                <span className="absolute -left-[2.28rem] top-1.5 h-3 w-3 rounded-full border-2 border-accent bg-bg" />
+                <p className="font-sans text-xs uppercase tracking-wide text-accent">
+                  {item.period}
+                  {item.current && ' — en cours'}
+                </p>
+                <h3 className="mt-2 font-serif text-2xl text-fg">{item.degree}</h3>
+                <p className="mt-1 font-sans text-sm text-fg-muted">
+                  {item.school} — {item.location}
+                </p>
+                {item.description && (
+                  <p className="mt-3 max-w-lg font-sans text-sm leading-relaxed text-fg-muted">
+                    {item.description}
+                  </p>
+                )}
+                {item.certification && (
+                  <p className="mt-2 font-sans text-xs text-fg-muted/80">
+                    {item.certification}
+                  </p>
+                )}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
-    </SectionWrapper>
+    </section>
   )
 }

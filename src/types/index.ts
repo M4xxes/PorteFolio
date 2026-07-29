@@ -1,16 +1,16 @@
-// Interfaces TypeScript centralisées pour toutes les données du portfolio
-
 export interface Project {
   id: string
   title: string
   description: string
   longDescription?: string
   stack: string[]
-  image?: string
   githubUrl?: string
   demoUrl?: string
   featured?: boolean
   status: 'completed' | 'in-progress' | 'concept'
+  mockupType: 'web' | 'mobile' | 'dashboard'
+  accentFrom: string
+  accentTo: string
 }
 
 export interface SkillCategory {

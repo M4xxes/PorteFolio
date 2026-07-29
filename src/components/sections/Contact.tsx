@@ -1,233 +1,157 @@
-import { useState, type FormEvent } from 'react'
-import { Mail, Phone, Github, MapPin, Send, CheckCircle, AlertCircle } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { SectionWrapper, SectionHeader } from '../ui/SectionWrapper'
+'use client'
 
-type Status = 'idle' | 'sending' | 'success' | 'error'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Send, Loader2, Check, AlertCircle } from 'lucide-react'
+import { DotGridCanvas } from '@/components/ui/DotGridCanvas'
+import { site, easing } from '@/lib/constants'
 
-const CONTACT_INFO = [
-  { icon: Mail, label: 'Email', value: 'maxime.pero@ynov.com', href: 'mailto:maxime.pero@ynov.com' },
-  { icon: Phone, label: 'Téléphone', value: '07 86 56 90 51', href: 'tel:+33786569051' },
-  { icon: Github, label: 'GitHub', value: 'github.com/M4xxes', href: 'https://github.com/M4xxes' },
-  { icon: MapPin, label: 'Localisation', value: 'Lyon, France', href: undefined },
-]
+type Status = 'idle' | 'loading' | 'success' | 'error'
 
 export function Contact() {
   const [status, setStatus] = useState<Status>('idle')
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' })
+  const [errorMessage, setErrorMessage] = useState('')
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setStatus('sending')
+    const form = e.currentTarget
+    const data = {
+      name: (form.elements.namedItem('name') as HTMLInputElement).value,
+      email: (form.elements.namedItem('email') as HTMLInputElement).value,
+      message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
+    }
 
+    setStatus('loading')
     try {
-      /*
-       * Formspree : remplacez l'URL ci-dessous par votre endpoint Formspree.
-       * Inscription gratuite sur https://formspree.io → créez un formulaire → copiez l'URL.
-       * En attendant, le formulaire utilise un fallback mailto.
-       */
-      const FORMSPREE_URL = 'https://formspree.io/f/mojonpjg'
-
-      const res = await fetch(FORMSPREE_URL, {
+      const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       })
-
-      if (res.ok) {
-        setStatus('success')
-        setFormData({ name: '', email: '', subject: '', message: '' })
-      } else {
-        throw new Error('Erreur serveur')
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.error ?? 'Une erreur est survenue.')
       }
-    } catch {
-      // Fallback : ouvre le client mail natif
-      const subject = encodeURIComponent(formData.subject || 'Contact depuis le portfolio')
-      const body = encodeURIComponent(`Nom : ${formData.name}\n\n${formData.message}`)
-      window.location.href = `mailto:maxime.pero@ynov.com?subject=${subject}&body=${body}`
-      setStatus('idle')
+      setStatus('success')
+      form.reset()
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : 'Une erreur est survenue.')
+      setStatus('error')
     }
   }
 
-  const inputCls =
-    'w-full px-4 py-3 rounded-xl bg-elevated border border-c-border text-c-text text-sm placeholder:text-c-muted/50 focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/30 transition-colors'
-
   return (
-    <SectionWrapper id="contact" className="bg-surface">
-      <div className="max-w-6xl mx-auto px-5 md:px-8">
-        <SectionHeader
-          number="07"
-          title="Contact"
-          subtitle="Un projet, une question, une opportunité ? Parlons-en."
-        />
+    <section id="contact" className="relative z-20 overflow-hidden bg-bg px-6 py-32 sm:px-10 lg:px-20">
+      <DotGridCanvas />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-bg via-transparent to-bg" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16">
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-15%' }}
+        transition={{ duration: 0.8, ease: easing.smooth }}
+        className="relative mx-auto max-w-2xl"
+      >
+        <span className="block text-center font-sans text-xs uppercase tracking-[0.4em] text-accent">
+          Contact
+        </span>
+        <h2 className="mt-4 text-center font-serif text-4xl text-fg sm:text-5xl">
+          Un projet en tête ?
+        </h2>
+        <p className="mx-auto mt-4 max-w-md text-center font-sans text-sm text-fg-muted">
+          Que ce soit pour une opportunité, une question ou juste discuter — n&apos;hésite pas.
+        </p>
 
-          {/* Infos de contact */}
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            <p className="text-c-muted text-sm leading-relaxed">
-              Disponible pour des missions freelance, des stages ou des projets collaboratifs.
-              N'hésitez pas à me contacter directement.
-            </p>
-
-            <ul className="flex flex-col gap-4">
-              {CONTACT_INFO.map(({ icon: Icon, label, value, href }) => (
-                <li key={label}>
-                  {href ? (
-                    <a
-                      href={href}
-                      target={href.startsWith('http') ? '_blank' : undefined}
-                      rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      className="flex items-center gap-3 group"
-                    >
-                      <div className="w-9 h-9 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0
-                                      group-hover:bg-accent/18 transition-colors">
-                        <Icon size={15} className="text-accent" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-c-muted uppercase tracking-widest font-medium">{label}</p>
-                        <p className="text-sm text-c-text group-hover:text-accent transition-colors">{value}</p>
-                      </div>
-                    </a>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
-                        <Icon size={15} className="text-accent" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-c-muted uppercase tracking-widest font-medium">{label}</p>
-                        <p className="text-sm text-c-text">{value}</p>
-                      </div>
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-
-            {/* Permis */}
-            <div className="flex gap-2 flex-wrap pt-2">
-              {['Permis B', 'Permis A'].map(p => (
-                <span key={p} className="text-[11px] px-3 py-1 rounded-full border border-c-border text-c-muted">
-                  {p}
-                </span>
-              ))}
-            </div>
+        <form onSubmit={handleSubmit} className="mt-14 flex flex-col gap-8">
+          <div className="grid gap-8 sm:grid-cols-2">
+            <label className="group flex flex-col gap-2">
+              <span className="font-sans text-xs uppercase tracking-wide text-fg-muted">
+                Nom
+              </span>
+              <input
+                name="name"
+                type="text"
+                required
+                className="border-b border-border-soft bg-transparent py-2 font-sans text-fg outline-none transition-colors focus:border-accent"
+                placeholder="Ton nom"
+              />
+            </label>
+            <label className="group flex flex-col gap-2">
+              <span className="font-sans text-xs uppercase tracking-wide text-fg-muted">
+                Email
+              </span>
+              <input
+                name="email"
+                type="email"
+                required
+                className="border-b border-border-soft bg-transparent py-2 font-sans text-fg outline-none transition-colors focus:border-accent"
+                placeholder="ton@email.com"
+              />
+            </label>
           </div>
 
-          {/* Formulaire */}
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
-            className="lg:col-span-3"
-          >
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4" aria-label="Formulaire de contact">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="name" className="block text-[11px] font-medium text-c-muted mb-1.5 uppercase tracking-widest">
-                    Nom *
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    required
-                    placeholder="Votre nom"
-                    value={formData.name}
-                    onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
-                    className={inputCls}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-[11px] font-medium text-c-muted mb-1.5 uppercase tracking-widest">
-                    Email *
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    required
-                    placeholder="votre@email.com"
-                    value={formData.email}
-                    onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                    className={inputCls}
-                  />
-                </div>
-              </div>
+          <label className="flex flex-col gap-2">
+            <span className="font-sans text-xs uppercase tracking-wide text-fg-muted">
+              Message
+            </span>
+            <textarea
+              name="message"
+              required
+              rows={4}
+              className="resize-none border-b border-border-soft bg-transparent py-2 font-sans text-fg outline-none transition-colors focus:border-accent"
+              placeholder="Parle-moi de ton projet..."
+            />
+          </label>
 
-              <div>
-                <label htmlFor="subject" className="block text-[11px] font-medium text-c-muted mb-1.5 uppercase tracking-widest">
-                  Sujet
-                </label>
-                <input
-                  id="subject"
-                  type="text"
-                  placeholder="Objet du message"
-                  value={formData.subject}
-                  onChange={e => setFormData(p => ({ ...p, subject: e.target.value }))}
-                  className={inputCls}
-                />
-              </div>
+          <div className="flex items-center justify-between gap-4">
+            <div className="font-sans text-xs text-fg-muted" aria-live="polite">
+              {status === 'success' && (
+                <span className="flex items-center gap-1.5 text-accent">
+                  <Check size={14} /> Message envoyé, merci !
+                </span>
+              )}
+              {status === 'error' && (
+                <span className="flex items-center gap-1.5 text-red-400">
+                  <AlertCircle size={14} /> {errorMessage}
+                </span>
+              )}
+            </div>
 
-              <div>
-                <label htmlFor="message" className="block text-[11px] font-medium text-c-muted mb-1.5 uppercase tracking-widest">
-                  Message *
-                </label>
-                <textarea
-                  id="message"
-                  required
-                  rows={5}
-                  placeholder="Votre message..."
-                  value={formData.message}
-                  onChange={e => setFormData(p => ({ ...p, message: e.target.value }))}
-                  className={`${inputCls} resize-none`}
-                />
-              </div>
-
-              <motion.button
-                type="submit"
-                disabled={status === 'sending' || status === 'success'}
-                whileHover={{ scale: status === 'idle' ? 1.02 : 1 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl font-semibold text-sm
-                           bg-accent text-white hover:bg-accent-dark disabled:opacity-60 disabled:cursor-not-allowed
-                           transition-colors shadow-accent-sm"
-              >
-                {status === 'sending' ? (
-                  <><span className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full" /> Envoi…</>
-                ) : (
-                  <><Send size={15} /> Envoyer le message</>
-                )}
-              </motion.button>
-
-              {/* Feedback d'envoi */}
-              <AnimatePresence>
-                {status === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="flex items-center gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-sm"
+            <motion.button
+              type="submit"
+              data-cursor-hover
+              disabled={status === 'loading'}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 font-sans text-sm font-medium text-bg transition-opacity disabled:opacity-60"
+            >
+              {status === 'loading' ? (
+                <>
+                  Envoi <Loader2 size={16} className="animate-spin" />
+                </>
+              ) : (
+                <>
+                  Envoyer
+                  <motion.span
+                    className="inline-flex"
+                    whileHover={{ x: 4, y: -4, rotate: 25 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 12 }}
                   >
-                    <CheckCircle size={16} />
-                    Message envoyé — je vous réponds rapidement !
-                  </motion.div>
-                )}
-                {status === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/25 text-red-400 text-sm"
-                  >
-                    <AlertCircle size={16} />
-                    Erreur lors de l'envoi. Essayez par email directement.
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </form>
-          </motion.div>
-        </div>
-      </div>
-    </SectionWrapper>
+                    <Send size={16} />
+                  </motion.span>
+                </>
+              )}
+            </motion.button>
+          </div>
+        </form>
+
+        <p className="mt-16 text-center font-sans text-xs text-fg-muted">
+          Ou directement par email :{' '}
+          <a href={`mailto:${site.email}`} data-cursor-hover className="text-fg underline underline-offset-4">
+            {site.email}
+          </a>
+        </p>
+      </motion.div>
+    </section>
   )
 }

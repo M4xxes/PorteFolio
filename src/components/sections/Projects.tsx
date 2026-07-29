@@ -1,47 +1,75 @@
-import { motion } from 'framer-motion'
-import { SectionWrapper, SectionHeader } from '../ui/SectionWrapper'
-import { ProjectCard } from '../ui/ProjectCard'
-import { projects } from '../../data/projects'
-import { Github } from 'lucide-react'
+'use client'
+
+import { useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { projects } from '@/lib/data/projects'
+import { ProjectCard } from '@/components/ui/ProjectCard'
+import { easing } from '@/lib/constants'
+
+const ALL = 'Tous'
 
 export function Projects() {
-  return (
-    <SectionWrapper id="projects" className="bg-surface">
-      <div className="max-w-6xl mx-auto px-5 md:px-8">
-        <SectionHeader
-          number="03"
-          title="Projets"
-          subtitle="Réalisations concrètes — sites vitrine, interfaces industrielles et apps mobiles."
-        />
+  const stacks = useMemo(() => {
+    const set = new Set<string>()
+    projects.forEach((p) => p.stack.forEach((s) => set.add(s)))
+    return [ALL, ...Array.from(set)]
+  }, [])
 
-        {/* Grille de projets — extensible en ajoutant des entrées dans data/projects.ts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
+  const [filter, setFilter] = useState(ALL)
+
+  const filtered = useMemo(
+    () => (filter === ALL ? projects : projects.filter((p) => p.stack.includes(filter))),
+    [filter]
+  )
+
+  return (
+    <section id="projects" className="relative z-20 bg-bg px-6 py-32 sm:px-10 lg:px-20">
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-15%' }}
+        transition={{ duration: 0.8, ease: easing.smooth }}
+        className="mx-auto mb-16 max-w-6xl"
+      >
+        <span className="font-sans text-xs uppercase tracking-[0.4em] text-accent">Projets</span>
+        <h2 className="mt-4 max-w-2xl font-serif text-4xl text-fg sm:text-5xl">
+          Des idées transformées en produits concrets.
+        </h2>
+
+        <div className="mt-8 flex flex-wrap gap-2">
+          {stacks.map((s) => (
+            <button
+              key={s}
+              data-cursor-hover
+              onClick={() => setFilter(s)}
+              className={`rounded-full border px-4 py-1.5 font-sans text-xs uppercase tracking-wide transition-colors ${
+                filter === s
+                  ? 'border-accent bg-accent/15 text-fg'
+                  : 'border-border-soft text-fg-muted hover:border-accent/40 hover:text-fg'
+              }`}
+            >
+              {s}
+            </button>
           ))}
         </div>
+      </motion.div>
 
-        {/* Lien vers GitHub */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex justify-center mt-12"
-        >
-          <a
-            href="https://github.com/M4xxes"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2.5 px-6 py-3 rounded-xl border border-c-border
-                       bg-elevated text-c-muted text-sm font-medium
-                       hover:border-accent/50 hover:text-accent transition-colors duration-200"
-          >
-            <Github size={16} />
-            Voir tous mes projets sur GitHub
-          </a>
-        </motion.div>
+      <div className="mx-auto grid max-w-6xl gap-x-10 gap-y-20 sm:grid-cols-2">
+        <AnimatePresence mode="popLayout">
+          {filtered.map((project) => (
+            <motion.div
+              key={project.id}
+              layout
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.5, ease: easing.smooth }}
+            >
+              <ProjectCard project={project} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
-    </SectionWrapper>
+    </section>
   )
 }
