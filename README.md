@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — Maxime Pero
 
-## Getting Started
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Framer Motion et Lenis.
 
-First, run the development server:
+## Identité
+
+- Palette : crème `#f1ece2`, encre `#151311`, orange brûlé `#e0602a` (texte orange sur crème : `#b54a17`), surfaces sombres `#1b1916`. Tokens dans `src/app/globals.css`.
+- Typographies (SIL OFL, auto-hébergées par `next/font`) : Bricolage Grotesque (titres), Geist (texte), Geist Mono (détails).
+- Interactions signature : introduction « Entrer » (`src/components/intro`), champ génératif du Hero (`InkField`, canvas 2D), index de projets avec aperçu qui suit le curseur (`ProjectIndex`). Transitions de page : React `<ViewTransition>` (`globals.css`, section « Transitions de page »).
+
+## Introduction
+
+Affichée à la première visite de `/` (une fois par session, `sessionStorage`). Un script en ligne pose `data-intro="on"` sur `<html>` avant le premier rendu ; sans JavaScript, l'introduction reste masquée. Elle peut être rejouée depuis le pied de page.
+
+## Démarrer
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run lint
+npm run typecheck
+npm run build && npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Pages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Route | Contenu |
+| --- | --- |
+| `/` | Hero, projets sélectionnés, savoir-faire, aperçu « À propos » |
+| `/projects` | Tous les projets (filtres) + autres dépôts GitHub chargés automatiquement |
+| `/projects/[slug]` | Fiche projet : contexte, contribution, fonctionnalités, stack, liens |
+| `/about` | Parcours, compétences, façon de travailler, CV (aperçu, consultation, téléchargement) |
+| `/contact` | E-mail, profils, formulaire (uniquement si l'envoi est configuré) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Variables d'environnement (toutes facultatives)
 
-## Learn More
+| Variable | Rôle |
+| --- | --- |
+| `RESEND_API_KEY` | Active le formulaire de contact (sinon la page propose l'e-mail direct). |
+| `CONTACT_FROM_EMAIL` | Expéditeur vérifié chez Resend, ex. `Portfolio <contact@mon-domaine.fr>`. |
+| `GITHUB_TOKEN` | Augmente la limite de l'API GitHub. Lu côté serveur uniquement. |
+| `NEXT_PUBLIC_SITE_URL` | URL publique (canonical, Open Graph, sitemap). Sur Netlify, `URL` est utilisée par défaut. |
 
-To learn more about Next.js, take a look at the following resources:
+## Ajouter un projet
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Ajouter une entrée dans `src/lib/data/projects.ts` (le champ `repo` relie le projet à son dépôt GitHub).
+2. Déposer l'image dans `public/projects/` (WebP, 1600 × 1000) et préciser `kind: 'screenshot'` (capture réelle) ou `'illustration'` (visuel de présentation, signalé comme tel sur le site).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Les dépôts publics non présentés en détail apparaissent automatiquement sur `/projects` (données GitHub régénérées toutes les 24 h).

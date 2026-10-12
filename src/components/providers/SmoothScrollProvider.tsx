@@ -1,38 +1,35 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
+import { MotionConfig } from 'framer-motion'
 import Lenis from 'lenis'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-gsap.registerPlugin(ScrollTrigger)
+let lenisInstance: Lenis | null = null
+
+/** Accès à l'instance Lenis (ex. bloquer le défilement quand le menu mobile est ouvert). */
+export function getLenis() {
+  return lenisInstance
+}
 
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
-  const lenisRef = useRef<Lenis | null>(null)
-
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReduced) return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mq.matches) return
 
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.05,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
+      autoRaf: true,
+      anchors: { offset: -80 },
     })
-    lenisRef.current = lenis
-
-    lenis.on('scroll', ScrollTrigger.update)
-
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000)
-    })
-    gsap.ticker.lagSmoothing(0)
+    lenisInstance = lenis
 
     return () => {
       lenis.destroy()
-      lenisRef.current = null
+      lenisInstance = null
     }
   }, [])
 
-  return <>{children}</>
+  // reducedMotion="user" : Framer Motion coupe les animations de transformation si l'utilisateur le demande.
+  return <MotionConfig reducedMotion="user">{children}</MotionConfig>
 }

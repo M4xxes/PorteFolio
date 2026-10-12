@@ -6,10 +6,11 @@ export const experiences: Experience[] = [
     role: 'Employé de station-service',
     company: 'ENI',
     location: 'Vourles, France',
-    period: 'Août 2023 — Présent',
+    period: 'Depuis août 2023 · week-ends',
     type: 'CDI',
     current: true,
     description: [
+      'Job étudiant le week-end, en parallèle de la formation',
       'Accueil et orientation de la clientèle',
       'Encaissement et gestion de caisse',
       'Tenue du point de vente (réassort, hygiène, organisation)',

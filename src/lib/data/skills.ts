@@ -3,72 +3,37 @@ import type { SkillCategory } from '@/types'
 export const skillCategories: SkillCategory[] = [
   {
     id: 'frontend',
-    label: 'Front-End',
-    iconName: 'Monitor',
-    skills: [
-      { name: 'React', level: 'avancé' },
-      { name: 'TypeScript', level: 'avancé' },
-      { name: 'JavaScript', level: 'avancé' },
-      { name: 'HTML / CSS', level: 'expert' },
-      { name: 'Tailwind CSS', level: 'avancé' },
-      { name: 'Vite', level: 'avancé' },
-      { name: 'Framer Motion', level: 'intermédiaire' },
-    ],
+    label: 'Front-end',
+    skills: ['React', 'TypeScript', 'JavaScript', 'HTML / CSS', 'Tailwind CSS', 'Next.js', 'Vue 3', 'Framer Motion'],
   },
   {
     id: 'backend',
-    label: 'Back-End',
-    iconName: 'Server',
-    skills: [
-      { name: 'Node.js', level: 'intermédiaire' },
-      { name: 'Express', level: 'intermédiaire' },
-      { name: 'REST API', level: 'intermédiaire' },
-    ],
+    label: 'Back-end',
+    skills: ['Node.js', 'Express', 'API REST', 'Prisma', 'JWT'],
   },
   {
-    id: 'mobile',
-    label: 'Mobile',
-    iconName: 'Smartphone',
-    skills: [
-      { name: 'Flutter', level: 'intermédiaire' },
-      { name: 'Dart', level: 'intermédiaire' },
-    ],
-  },
-  {
-    id: 'databases',
+    id: 'data',
     label: 'Bases de données',
-    iconName: 'Database',
-    skills: [
-      { name: 'MongoDB', level: 'intermédiaire' },
-      { name: 'Neo4j', level: 'débutant' },
-      { name: 'SQL', level: 'intermédiaire' },
-    ],
+    skills: ['SQL', 'MySQL', 'SQLite', 'MongoDB', 'Neo4j'],
+  },
+  {
+    id: 'apps',
+    label: 'Mobile & desktop',
+    skills: ['Flutter', 'Dart', 'Electron'],
   },
   {
     id: 'tools',
-    label: 'Outils & DevOps',
-    iconName: 'Wrench',
-    skills: [
-      { name: 'Git / GitHub', level: 'avancé' },
-      { name: 'Netlify', level: 'avancé' },
-      { name: 'Node-RED', level: 'débutant' },
-      { name: 'OPC-UA / Modbus', level: 'débutant' },
-    ],
-  },
-  {
-    id: 'softskills',
-    label: 'Soft Skills',
-    iconName: 'Users',
-    skills: [
-      { name: 'Adaptabilité & autonomie' },
-      { name: 'Organisation & rigueur' },
-      { name: 'Travail en équipe' },
-      { name: 'Curiosité & veille tech' },
-    ],
+    label: 'Outils',
+    skills: ['Git / GitHub', 'Vite', 'Netlify', 'Node-RED', 'OPC-UA / Modbus'],
   },
 ]
 
-// Positions sur une sphère de Fibonacci pour le nuage de particules 3D
-export const skillCloud = skillCategories.flatMap((cat) =>
-  cat.skills.map((s) => ({ name: s.name, category: cat.id }))
-)
+/** Langages pratiqués en formation (projets publics sur GitHub). */
+export const otherLanguages = ['C# / WPF', 'Java / JavaFX', 'Go']
+
+export const softSkills = ['Adaptabilité & autonomie', 'Organisation & rigueur', 'Travail en équipe', 'Curiosité & veille technique']
+
+export const languages = [
+  { label: 'Français', level: 'Courant' },
+  { label: 'Anglais', level: 'Intermédiaire' },
+]

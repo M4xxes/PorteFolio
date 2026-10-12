@@ -3,10 +3,10 @@ import type { Education } from '@/types'
 export const education: Education[] = [
   {
     id: 'ynov',
-    degree: 'Bachelor Informatique — 3ème année',
+    degree: 'Bachelor Informatique',
     school: 'Ynov Campus',
     location: 'Lyon, France',
-    period: '2023 — Présent',
+    period: '2023 — aujourd’hui',
     current: true,
     description:
       'Spécialisation Full-Stack Web. Développement front-end et back-end, projets clients réels, travail en équipe Agile.',
