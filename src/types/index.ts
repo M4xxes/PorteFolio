@@ -27,6 +27,14 @@ export interface Project {
   category: ProjectCategory
   year: string
   role: string
+  /** Phrase-histoire : le problème et ce que j'ai fait, à la première personne. */
+  story: string
+  /** Ligne « Rôle » courte, en majuscules à l'affichage. */
+  roleLine: string
+  /** Étiquette affichée sous le compteur, ex. « WEB · PORTFOLIO · 2026 ». */
+  tag: string
+  /** Titre court en capitales pour l'interface (liste, compteur). */
+  short: string
   /** Nom du dépôt public sur GitHub (sert aussi à l'enrichissement automatique). */
   repo?: string
   demoUrl?: string

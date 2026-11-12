@@ -17,15 +17,8 @@ export const site = {
 }
 
 export const navLinks = [
-  { href: '/', label: 'Accueil', index: '00' },
-  { href: '/projects', label: 'Projets', index: '01' },
-  { href: '/about', label: 'À propos', index: '02' },
-  { href: '/contact', label: 'Contact', index: '03' },
+  { href: '/#top', label: 'Accueil', index: '00' },
+  { href: '/#work', label: 'Projets', index: '01' },
+  { href: '/#about', label: 'À propos', index: '02' },
+  { href: '/#contact', label: 'Contact', index: '03' },
 ] as const
-
-export const INTRO_STORAGE_KEY = 'portfolio:intro-seen'
-
-export const easing = {
-  smooth: [0.16, 1, 0.3, 1] as const,
-  inOut: [0.76, 0, 0.24, 1] as const,
-}

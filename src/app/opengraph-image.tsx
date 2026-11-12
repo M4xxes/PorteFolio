@@ -16,21 +16,22 @@ export default function OpengraphImage() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '56px 72px',
-          background: '#f1ece2',
-          color: '#151311',
+          background: '#0c0c0e',
+          color: '#edede8',
+          fontFamily: 'monospace',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 22, letterSpacing: 4, textTransform: 'uppercase', color: '#6a635a' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 22, letterSpacing: 4, textTransform: 'uppercase', color: '#9a9a94' }}>
           <span>Portfolio 2026</span>
           <span>Lyon, France</span>
         </div>
-        <div style={{ display: 'flex', fontSize: 190, fontWeight: 800, letterSpacing: -10, lineHeight: 0.85 }}>
+        <div style={{ display: 'flex', fontSize: 170, fontWeight: 700, letterSpacing: -6, lineHeight: 0.9, textTransform: 'uppercase' }}>
           <span>Maxime Pero</span>
-          <span style={{ color: '#e0602a' }}>.</span>
+          <span style={{ color: '#d4ff3a' }}>.</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '3px solid #151311', paddingTop: 24 }}>
-          <span style={{ fontSize: 40 }}>Développeur full-stack</span>
-          <span style={{ fontSize: 24, color: '#6a635a' }}>React · TypeScript · Node.js</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '2px solid rgba(237,237,232,0.32)', paddingTop: 24 }}>
+          <span style={{ fontSize: 34, letterSpacing: 3, textTransform: 'uppercase' }}>[00] Développeur full-stack</span>
+          <span style={{ fontSize: 24, color: '#9a9a94' }}>React · TypeScript · Node.js</span>
         </div>
       </div>
     ),

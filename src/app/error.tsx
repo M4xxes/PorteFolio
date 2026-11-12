@@ -1,9 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { RotateCcw } from 'lucide-react'
-import { ButtonLink } from '@/components/ui/ButtonLink'
-import { Container, Label } from '@/components/ui/Section'
+import { Button, Container, Tag } from '@/components/ui/Kit'
 
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -11,28 +9,20 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
   }, [error])
 
   return (
-    <main id="main" className="flex min-h-[80svh] items-center pt-[var(--header-h)]">
+    <main id="main" className="flex min-h-svh items-center pt-[var(--header-h)]">
       <Container className="py-24">
-        <Label index="!" className="text-muted">
-          Erreur
-        </Label>
-        <h1 className="display mt-8 max-w-4xl text-[clamp(2.75rem,7vw,6rem)]">
-          Quelque chose s’est mal passé<span className="text-orange">.</span>
+        <Tag index="!">Erreur</Tag>
+        <h1 className="pixel mt-8 text-[clamp(2.5rem,7vw,6rem)]">
+          Quelque chose a planté<span className="text-accent">.</span>
         </h1>
-        <p className="mt-6 max-w-md text-lg text-muted">
-          Un problème inattendu a empêché l’affichage de la page. Vous pouvez réessayer ou revenir à l’accueil.
-        </p>
-        <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
-          <button
-            type="button"
-            onClick={reset}
-            className="inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 text-sm font-medium text-cream transition-colors hover:bg-orange hover:text-ink"
-          >
-            Réessayer <RotateCcw size={16} aria-hidden />
+        <p className="mt-6 max-w-md text-fg-2">Un problème inattendu a empêché l’affichage de la page. Vous pouvez réessayer ou revenir à l’accueil.</p>
+        <div className="mt-10 flex flex-wrap gap-2">
+          <button type="button" onClick={reset} className="ui press inline-flex min-h-11 items-center bg-accent px-5 py-4 tracking-[0.1em] text-accent-ink">
+            [↻] Réessayer
           </button>
-          <ButtonLink href="/" variant="text">
-            Retour à l’accueil
-          </ButtonLink>
+          <Button href="/" variant="text">
+            Accueil
+          </Button>
         </div>
       </Container>
     </main>

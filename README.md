@@ -4,13 +4,12 @@ Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Framer Motion et 
 
 ## Identité
 
-- Palette : crème `#f1ece2`, encre `#151311`, orange brûlé `#e0602a` (texte orange sur crème : `#b54a17`), surfaces sombres `#1b1916`. Tokens dans `src/app/globals.css`.
-- Typographies (SIL OFL, auto-hébergées par `next/font`) : Bricolage Grotesque (titres), Geist (texte), Geist Mono (détails).
-- Interactions signature : introduction « Entrer » (`src/components/intro`), champ génératif du Hero (`InkField`, canvas 2D), index de projets avec aperçu qui suit le curseur (`ProjectIndex`). Transitions de page : React `<ViewTransition>` (`globals.css`, section « Transitions de page »).
+Arcade futuriste, épurée, sombre par défaut. Suivi de la refonte : `PROGRESS.md`.
 
-## Introduction
-
-Affichée à la première visite de `/` (une fois par session, `sessionStorage`). Un script en ligne pose `data-intro="on"` sur `<html>` avant le premier rendu ; sans JavaScript, l'introduction reste masquée. Elle peut être rejouée depuis le pied de page.
+- Couleurs : fond `#0C0C0E`, surface `#18181B`, texte `#EDEDE8`, secondaire `#9A9A94`, accent unique `--accent: #D4FF3A` (à changer en une ligne dans `src/app/globals.css`).
+- Typographies (SIL OFL, auto-hébergées par `next/font`) : Geist Pixel Square (titres, paquet `geist`), Departure Mono (interface et lecture, `src/app/fonts`), Doto (chiffres).
+- Une seule boucle d'animation (`src/lib/loop.ts`) : Lenis puis le curseur (et la scène 3D à partir de la phase 2). Le défilement et le pointeur sont publiés dans un store `zustand` (`src/lib/store.ts`), lu sans re-render.
+- Écran de démarrage : accueil uniquement, une fois par session, écran ≥ 768 px à pointeur fin, hors reduced motion et hors version légère. Décidé par un script en ligne avant le premier rendu ; sans JavaScript, il ne s'affiche jamais.
 
 ## Démarrer
 
@@ -26,11 +25,9 @@ npm run build && npm start
 
 | Route | Contenu |
 | --- | --- |
-| `/` | Hero, projets sélectionnés, savoir-faire, aperçu « À propos » |
-| `/projects` | Tous les projets (filtres) + autres dépôts GitHub chargés automatiquement |
-| `/projects/[slug]` | Fiche projet : contexte, contribution, fonctionnalités, stack, liens |
-| `/about` | Parcours, compétences, façon de travailler, CV (aperçu, consultation, téléchargement) |
-| `/contact` | E-mail, profils, formulaire (uniquement si l'envoi est configuré) |
+| `/` | Hero, sélection de projets, méthode, compétences, à propos, contact |
+| `/projects/[slug]` | Fiche projet : phrase-histoire, rôle, stack, liens, captures |
+| `/projects`, `/about`, `/contact` | Redirections temporaires vers `/#work`, `/#about`, `/#contact` |
 
 ## Variables d'environnement (toutes facultatives)
 
@@ -44,6 +41,5 @@ npm run build && npm start
 ## Ajouter un projet
 
 1. Ajouter une entrée dans `src/lib/data/projects.ts` (le champ `repo` relie le projet à son dépôt GitHub).
-2. Déposer l'image dans `public/projects/` (WebP, 1600 × 1000) et préciser `kind: 'screenshot'` (capture réelle) ou `'illustration'` (visuel de présentation, signalé comme tel sur le site).
-
-Les dépôts publics non présentés en détail apparaissent automatiquement sur `/projects` (données GitHub régénérées toutes les 24 h).
+2. Renseigner `short`, `tag`, `roleLine` et `story` (phrase-histoire à la première personne).
+3. Déposer l'image dans `public/projects/` (WebP, 1600 × 1000) et préciser `kind: 'screenshot'` (capture réelle) ou `'illustration'` (visuel de présentation, signalé comme tel sur le site).

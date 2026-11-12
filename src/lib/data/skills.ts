@@ -37,3 +37,6 @@ export const languages = [
   { label: 'Français', level: 'Courant' },
   { label: 'Anglais', level: 'Intermédiaire' },
 ]
+
+/** Nombre total de technologies citées (groupes + « aussi pratiqué »). */
+export const skillCount = skillCategories.reduce((n, c) => n + c.skills.length, 0) + otherLanguages.length

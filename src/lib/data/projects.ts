@@ -8,6 +8,11 @@ import type { Project, ProjectCategory } from '@/types'
 export const projects: Project[] = [
   {
     id: 'mixer-hmi',
+    short: 'SUPERVISION MULTI-MALAXEURS',
+    tag: 'WEB · INDUSTRIEL · 2026',
+    roleLine: 'Interface & front-end · intégration API',
+    story:
+      'Il fallait piloter six malaxeurs industriels depuis un seul écran. J’ai développé l’interface en React et TypeScript : vue d’ensemble, recettes éditables jusqu’à 32 étapes, alarmes à acquitter, historique des lots exportable en CSV. Je l’ai branchée sur l’API REST du projet ; un collaborateur s’est chargé de la base, de Node-RED et des automates.',
     tone: 'dark',
     title: 'Supervision multi-malaxeurs',
     tagline: 'Écran de contrôle industriel pour six malaxeurs',
@@ -84,6 +89,11 @@ export const projects: Project[] = [
   },
   {
     id: 'animarah',
+    short: 'ANIMARAH',
+    tag: 'WEB · VITRINE · 2026',
+    roleLine: 'Conception · développement · mise en ligne',
+    story:
+      'Une praticienne en massage équin voulait un site simple pour des propriétaires de chevaux pas toujours à l’aise avec le web. J’ai conçu et développé les cinq pages, de la maquette à la mise en ligne sur Netlify : massages, communication animale, formules avec leur grille tarifaire, contact. Les images sont optimisées pour une lecture confortable sur mobile.',
     tone: 'light',
     title: 'Animarah',
     tagline: 'Site vitrine pour une praticienne en massage équin',
@@ -143,6 +153,11 @@ export const projects: Project[] = [
   },
   {
     id: 'evastre',
+    short: 'EVASTRE PHOTOGRAPHIE',
+    tag: 'WEB · PORTFOLIO · 2026',
+    roleLine: 'Conception · développement',
+    story:
+      'Le portfolio d’une photographe lyonnaise tenait sur une plateforme générique. Je l’ai refait sur mesure en React : une grille de projets filtrable (sport, événementiel, auto/moto, portrait) et une page par série. On parcourt les photos dans une visionneuse au clavier ou au swipe, et un script génère chaque photo en WebP en 640, 1280 et 1920 px.',
     tone: 'dark',
     title: 'Evastre Photographie',
     tagline: 'Portfolio sur mesure pour une photographe lyonnaise',
@@ -227,6 +242,11 @@ export const projects: Project[] = [
   },
   {
     id: 'api-marketplace',
+    short: 'API MARKETPLACE',
+    tag: 'BACK-END · API REST · 2025',
+    roleLine: 'Back-end',
+    story:
+      'Pour le TP final du module API, il fallait une API proche de la production. J’ai construit le catalogue d’une marketplace en Express et TypeScript : pagination, tri, filtres et projection sur une seule route /products. J’y ai ajouté l’authentification par access token court et refresh token renouvelé à chaque usage, avec Prisma pour les données et une petite interface HTML pour tester chaque route.',
     tone: 'dark',
     title: 'API Marketplace',
     tagline: 'API REST avec authentification JWT et rotation des tokens',
@@ -272,6 +292,11 @@ export const projects: Project[] = [
   },
   {
     id: 'dashboard-meteo',
+    short: 'DASHBOARD MÉTÉO',
+    tag: 'WEB · VUE 3 · 2026',
+    roleLine: 'Développement',
+    story:
+      'Je voulais une appli météo qui se lance sans clé d’API à configurer. En Vue 3 et Pinia, elle cherche la ville avec le géocodage d’Open-Meteo et affiche la météo actuelle et cinq jours de prévisions. Elle garde aussi la dernière ville et les favoris dans le navigateur.',
     tone: 'light',
     title: 'Dashboard météo',
     tagline: 'Application météo en Vue 3 avec villes favorites',
@@ -313,6 +338,11 @@ export const projects: Project[] = [
   },
   {
     id: 'soundboard-studio',
+    short: 'SOUNDBOARD STUDIO',
+    tag: 'DESKTOP · ELECTRON · 2026',
+    roleLine: 'Développement desktop',
+    story:
+      'En stream, il faut pouvoir lancer un son depuis n’importe quelle appli et l’envoyer dans Discord ou OBS. J’ai développé une app Electron avec raccourcis clavier globaux, enregistrement au micro et choix de la sortie audio. L’interface n’accède au système que par une API limitée (contextBridge, liste blanche de canaux IPC).',
     tone: 'dark',
     title: 'Soundboard Studio',
     tagline: 'Application de bureau Electron pour le streaming',
@@ -367,6 +397,11 @@ export const projects: Project[] = [
   },
   {
     id: 'map-app',
+    short: 'MAP — APP IOS',
+    tag: 'MOBILE · FLUTTER',
+    roleLine: 'Projet personnel',
+    story:
+      'Je voulais voir mes voyages autrement qu’en liste. Dans cette app iOS en Flutter, on fait tourner un globe Mapbox et on zoome au pinch. On voit aussi sa position en temps réel, et les pays visités se colorent.',
     tone: 'dark',
     title: 'Map — app mobile iOS',
     tagline: 'Globe interactif des pays visités',

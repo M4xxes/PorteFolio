@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { AlertCircle, Check, Loader2, Send } from 'lucide-react'
 import { CONTACT_LIMITS } from '@/lib/contact'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
 const fieldClass =
-  'w-full border-0 border-b-2 border-line-strong bg-transparent px-0 py-3 text-lg text-ink placeholder:text-subtle transition-colors outline-none focus:border-orange'
+  'w-full border-0 border-b border-line-strong bg-transparent px-0 py-3 text-base text-fg placeholder:text-fg-3 transition-colors outline-none focus:border-accent focus-visible:outline-none'
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>('idle')
@@ -40,7 +39,7 @@ export function ContactForm() {
     <form onSubmit={handleSubmit} className="relative flex flex-col gap-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">
-          <label htmlFor="contact-name" className="label text-muted">
+          <label htmlFor="contact-name" className="ui text-fg-2">
             Nom
           </label>
           <input
@@ -55,7 +54,7 @@ export function ContactForm() {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="contact-email" className="label text-muted">
+          <label htmlFor="contact-email" className="ui text-fg-2">
             E-mail
           </label>
           <input
@@ -72,7 +71,7 @@ export function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="contact-message" className="label text-muted">
+        <label htmlFor="contact-message" className="ui text-fg-2">
           Message
         </label>
         <textarea
@@ -83,7 +82,7 @@ export function ContactForm() {
           minLength={10}
           maxLength={CONTACT_LIMITS.message}
           className={`${fieldClass} resize-y`}
-          placeholder="Parlez-moi de votre projet, de l’alternance proposée…"
+          placeholder="L’alternance proposée, votre projet, vos délais…"
         />
       </div>
 
@@ -96,32 +95,21 @@ export function ContactForm() {
       <div className="flex flex-col-reverse gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
         <div role="status" aria-live="polite" className="min-h-5 text-sm">
           {status === 'success' && (
-            <span className="flex items-center gap-2 text-ink">
-              <Check size={16} aria-hidden className="text-orange-ink" /> Message envoyé, merci !
+            <span className="ui text-fg">
+              <span className="text-accent">[✓]</span> Message envoyé, merci.
             </span>
           )}
           {status === 'error' && (
-            <span className="flex items-center gap-2 text-[#a12a12]">
-              <AlertCircle size={16} aria-hidden /> {error}
-            </span>
+            <span className="ui text-[#ff8a7a]">[!] {error}</span>
           )}
         </div>
 
         <button
           type="submit"
           disabled={status === 'loading'}
-          className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-ink px-6 text-sm font-medium text-cream transition-[background-color,color,transform] hover:bg-orange hover:text-ink active:scale-[0.98] disabled:cursor-wait disabled:opacity-60"
+          className="ui press inline-flex min-h-11 items-center justify-center gap-3 bg-accent px-5 py-4 tracking-[0.1em] text-accent-ink disabled:cursor-wait disabled:opacity-60"
         >
-          {status === 'loading' ? (
-            <>
-              Envoi en cours <Loader2 size={16} aria-hidden className="animate-spin" />
-            </>
-          ) : (
-            <>
-              Envoyer le message
-              <Send size={16} aria-hidden className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </>
-          )}
+          {status === 'loading' ? 'ENVOI…' : '[→] ENVOYER LE MESSAGE'}
         </button>
       </div>
     </form>

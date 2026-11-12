@@ -1,30 +1,28 @@
 import type { Metadata, Viewport } from 'next'
-import { Bricolage_Grotesque, Geist, Geist_Mono } from 'next/font/google'
+import { Doto } from 'next/font/google'
+import localFont from 'next/font/local'
+import { GeistPixelSquare } from 'geist/font/pixel'
 import './globals.css'
-import { SmoothScrollProvider } from '@/components/providers/SmoothScrollProvider'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
-import { Intro } from '@/components/intro/Intro'
-import { introBootScript } from '@/components/intro/introState'
+import { ScrollEngine } from '@/components/shell/ScrollEngine'
+import { Header } from '@/components/shell/Header'
+import { Cursor } from '@/components/shell/Cursor'
+import { BootScreen } from '@/components/shell/BootScreen'
+import { bootScript } from '@/components/shell/bootScript'
+import { Footer } from '@/components/sections/Footer'
 import { InlineScript } from '@/components/ui/InlineScript'
 import { site } from '@/lib/constants'
 
-// Polices sous licence SIL Open Font License, auto-hébergées par next/font (aucune requête vers Google côté visiteur).
-const bricolage = Bricolage_Grotesque({
-  variable: '--font-bricolage',
-  subsets: ['latin'],
-  axes: ['wdth', 'opsz'],
+// Trois familles, sous licence SIL OFL, auto-hébergées par next/font (aucune requête externe côté visiteur).
+// Titres : Geist Pixel (Square). Interface et lecture : Departure Mono. Chiffres : Doto.
+const departure = localFont({
+  src: './fonts/DepartureMono-Regular.woff2',
+  variable: '--font-departure',
   display: 'swap',
+  fallback: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
 })
 
-const geist = Geist({
-  variable: '--font-geist',
-  subsets: ['latin'],
-  display: 'swap',
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const doto = Doto({
+  variable: '--font-doto-var',
   subsets: ['latin'],
   display: 'swap',
 })
@@ -57,36 +55,34 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#f1ece2',
-  colorScheme: 'light',
+  themeColor: '#0c0c0e',
+  colorScheme: 'dark',
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // suppressHydrationWarning : le script d'introduction ajoute `data-intro` sur <html> avant l'hydratation.
-    <html
-      lang="fr"
-      suppressHydrationWarning
-      className={`${bricolage.variable} ${geist.variable} ${geistMono.variable} antialiased`}
-    >
+    // suppressHydrationWarning : le script de démarrage pose `class="js"` et `data-boot` sur <html> avant l'hydratation.
+    <html lang="fr" suppressHydrationWarning className={`${GeistPixelSquare.variable} ${departure.variable} ${doto.variable}`}>
       <head>
-        <InlineScript html={introBootScript} />
+        <InlineScript html={bootScript} />
       </head>
-      <body className="min-h-screen bg-cream text-ink">
+      <body className="min-h-screen">
         <a
           href="#main"
-          className="sr-only bg-ink px-4 py-2 text-sm font-medium text-cream focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[300]"
+          className="ui sr-only bg-accent px-4 py-3 text-accent-ink focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[400]"
         >
           Aller au contenu
         </a>
-        <SmoothScrollProvider>
-          <Intro />
+        <ScrollEngine>
+          <BootScreen />
           <div id="site">
             <Header />
             {children}
             <Footer />
           </div>
-        </SmoothScrollProvider>
+          <Cursor />
+        </ScrollEngine>
+        <div aria-hidden className="grain" />
       </body>
     </html>
   )
