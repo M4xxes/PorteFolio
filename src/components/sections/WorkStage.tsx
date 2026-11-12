@@ -7,6 +7,7 @@ import { projects } from '@/lib/data/projects'
 import { setActiveProject, ui, useUI } from '@/lib/store'
 import { getLenis, scrollToTarget } from '@/components/shell/ScrollEngine'
 import { STEP_VH, measure, metrics } from '@/components/three/heroTimeline'
+import { openRoom } from '@/components/room/RoomController'
 import { Tag } from '@/components/ui/Kit'
 import { WorkCounter, WorkList } from './WorkList'
 
@@ -52,11 +53,19 @@ export function WorkStage() {
     }
   }, [])
 
-  // Clic sur une ligne : on fait défiler jusqu'au projet. Sur le projet déjà actif, le lien ouvre sa page.
+  // Clic sur une ligne : on fait défiler jusqu'au projet. Sur le projet déjà actif, on entre dans sa salle.
   const pick = (index: number, e: React.MouseEvent) => {
-    if (index === ui.getState().work.active || e.metaKey || e.ctrlKey || e.shiftKey || !metrics.ready) return
+    if (e.metaKey || e.ctrlKey || e.shiftKey || !metrics.ready) return
     e.preventDefault()
-    scrollToTarget(metrics.work.top + index * metrics.work.step)
+    if (index === ui.getState().work.active) openRoom(index)
+    else scrollToTarget(metrics.work.top + index * metrics.work.step)
+  }
+
+  // Clic sur l'écran actif : la caméra avance et on entre dans la salle (l'URL devient /projects/[slug]).
+  const enter = (e: React.MouseEvent) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return
+    e.preventDefault()
+    openRoom(ui.getState().work.active)
   }
 
   return (
@@ -83,6 +92,7 @@ export function WorkStage() {
         <Link
           href={`/projects/${project.id}`}
           data-cursor="OUVRIR"
+          onClick={enter}
           aria-label={`Ouvrir le projet ${project.title}`}
           className="screen-rect block"
         >

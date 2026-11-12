@@ -14,15 +14,20 @@ export function getLenis() {
   return lenisInstance
 }
 
-/** Bloque / rétablit le défilement (menu plein écran, écran de démarrage). */
-export function lockScroll(locked: boolean) {
-  document.documentElement.classList.toggle('scroll-locked', locked)
-  if (locked) lenisInstance?.stop()
+const locks = new Set<string>()
+
+/** Bloque / rétablit le défilement. Chaque demandeur (menu, salle…) a sa clé : on ne débloque que quand tous ont relâché. */
+export function lockScroll(locked: boolean, key = 'menu') {
+  if (locked) locks.add(key)
+  else locks.delete(key)
+  const any = locks.size > 0
+  document.documentElement.classList.toggle('scroll-locked', any)
+  if (any) lenisInstance?.stop()
   else lenisInstance?.start()
 }
 
 export function scrollToTarget(target: string | number | HTMLElement, immediate = false) {
-  if (lenisInstance) lenisInstance.scrollTo(target === '#top' ? 0 : target, { immediate })
+  if (lenisInstance) lenisInstance.scrollTo(target === '#top' ? 0 : target, { immediate, force: immediate })
   else if (typeof target === 'number') window.scrollTo({ top: target })
   else {
     const el = typeof target === 'string' ? document.querySelector(target) : target

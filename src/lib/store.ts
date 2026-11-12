@@ -15,6 +15,8 @@ export interface UIState {
   pointer: { x: number; y: number; nx: number; ny: number }
   /** Projet actif dans la sélection, et mode d'affichage (la salle arrive en phase 4). */
   work: { active: number; mode: 'carousel' | 'room' }
+  /** Écran mural visé par la caméra dans la salle (-1 = vue d'ensemble). */
+  roomFocus: number
   quality: Quality
   /** État de la scène 3D : en attente, en chargement, prête, ou non utilisée (version légère). */
   scene: 'idle' | 'loading' | 'ready' | 'off'
@@ -27,6 +29,7 @@ export const ui = createStore<UIState>()(() => ({
   scroll: { y: 0, progress: 0, velocity: 0 },
   pointer: { x: -100, y: -100, nx: 0, ny: 0 },
   work: { active: 0, mode: 'carousel' },
+  roomFocus: -1,
   quality: 'pending',
   scene: 'idle',
   liteForced: false,

@@ -383,3 +383,23 @@ html[data-scene='on'] [data-scene='hero'] > svg {
 html[data-scene='on'] .screen-fallback {
   opacity: 0;
 }
+
+/* ============================================================
+   Salle de contrôle (phase 4)
+   ============================================================ */
+.room-flash {
+  background-color: #2a2a2e;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.93 0 0 0 0 0.91 0 0 0 1.6 -0.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.room-panel {
+  animation: room-panel-in 280ms var(--ease-out) 620ms both;
+}
+.room-panel[data-instant='true'] {
+  animation-delay: 0ms;
+}
+@keyframes room-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}

@@ -35,7 +35,7 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
 }
 
 /**
- * Décide si la scène 3D est montée. Pour l'instant : accueil, écran ≥ 1024 px, WebGL disponible,
+ * Décide si la scène 3D est montée. Pour l'instant : accueil et pages projet (salle de contrôle), écran ≥ 1024 px, WebGL disponible,
  * hors reduced motion et hors « version légère ». La détection fine (GPU, FPS) arrive en phase 5.
  * Sinon, les versions statiques restent en place (sphère SVG, cartes 2D).
  */
@@ -50,7 +50,7 @@ export function SceneRoot() {
     let idle = 0
 
     const decide = () => {
-      const ok = pathname === '/' && !liteForced && wide.matches && !reduced.matches && webglAvailable()
+      const ok = (pathname === '/' || pathname.startsWith('/projects/')) && !liteForced && wide.matches && !reduced.matches && webglAvailable()
       if (!ok) {
         setMount(false)
         ui.setState({ scene: 'off', quality: 'lite' })

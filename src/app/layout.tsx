@@ -9,6 +9,7 @@ import { Cursor } from '@/components/shell/Cursor'
 import { BootScreen } from '@/components/shell/BootScreen'
 import { bootScript } from '@/components/shell/bootScript'
 import { SceneRoot } from '@/components/three/SceneRoot'
+import { RoomController } from '@/components/room/RoomController'
 import { Footer } from '@/components/sections/Footer'
 import { InlineScript } from '@/components/ui/InlineScript'
 import { site } from '@/lib/constants'
@@ -82,6 +83,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             {children}
             <Footer />
           </div>
+          <RoomController />
           <Cursor />
         </ScrollEngine>
         <div aria-hidden className="grain" />

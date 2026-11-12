@@ -6,9 +6,11 @@ import { ScrollBar, ScrollPercent } from './ScrollReadout'
 import { DecodeText } from './DecodeText'
 import { Wordmark } from './Wordmark'
 import { useUI, ui } from '@/lib/store'
+import { roomActions } from '@/components/three/roomState'
 
 export function Header() {
   const open = useUI((s) => s.menuOpen)
+  const inRoom = useUI((s) => s.work.mode === 'room')
 
   return (
     <>
@@ -22,7 +24,13 @@ export function Header() {
             <Wordmark />
           </Link>
 
-          <ScrollPercent className="hidden md:block" />
+          {inRoom ? (
+            <button id="room-close" type="button" onClick={() => roomActions.close()} className="ui invert-hover press inline-flex min-h-11 items-center px-3.5">
+              &gt; FERMER &lt;
+            </button>
+          ) : (
+            <ScrollPercent className="hidden md:block" />
+          )}
 
           <nav aria-label="Raccourcis" className="flex items-center gap-1">
             <Link href="/#contact" className="ui invert-hover hidden min-h-11 items-center gap-2.5 px-3.5 sm:inline-flex">

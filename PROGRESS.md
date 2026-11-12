@@ -9,8 +9,8 @@ Mémoire commune entre les modèles. À relire au début de chaque phase, avec l
 | 0 — Cadrage | Opus 5.5 | Terminée |
 | 1 — Fondations de l'interface | Opus 5.5 | **Terminée** (commit `phase-1`) |
 | 2 — Hero 3D | Fable 5.2 | Terminée (commit `phase-2`) |
-| 3 — Carrousel 3D + shader écran | Fable 5.2 | **Terminée** (commit `phase-3`), à montrer à Maxime avant la phase 4 |
-| 4 — Salle de contrôle + caméra | Fable 5.2 | À faire |
+| 3 — Carrousel 3D + shader écran | Fable 5.2 | Terminée (commit `phase-3`) |
+| 4 — Salle de contrôle + caméra | Fable 5.2 | **Terminée** (commit `phase-4`), à montrer à Maxime avant la phase 5 |
 | 5 — Secours, mobile, a11y | Opus 5.5 | À faire |
 | 6 — Polish | Sonnet 5.5 | À faire |
 | 7 — Vérification | Sonnet 5.5 | À faire |
@@ -54,14 +54,30 @@ Point de départ : commit `dc33fcd` (refonte crème / orange). Elle sera remplac
 - **Rendu à la demande** (`three/Stage.tsx`) : hero tant que `t < 1` ; carrousel seulement s'il y a eu du scroll ou un mouvement de curseur depuis moins de 1,5 s ; mesuré : 0 appel de dessin par seconde au repos.
 - **Vérifié** (Chrome, GPU Apple M2, build de production, 1440 × 900 et 1024 × 768) : passage hero → carrousel, rotation au scroll, aimantation (arrêt entre 2 projets → cran entier), clic sur la liste, lien d'ouverture (URL et focus clavier), bouton « Voir les projets » (arrive pile sur le projet 01), sortie vers la méthode, bascule version légère ↔ complète, reduced motion (cartes 2D), 60 images/s en défilement, 0 erreur console.
 
-## Notes pour la phase 4 (Fable 5.2)
+## Phase 4 — ce qui est fait
 
-- Le lien `.screen-rect` de `WorkStage` est le point d'entrée de la salle : intercepter le clic (version complète), `ui.setState({ work: { active, mode: 'room' } })`, `history.pushState` vers `/projects/[slug]`.
-- `SceneRoot` ne monte la scène que sur `/` : pour le chargement direct de `/projects/[slug]` en version complète, élargir la condition et prévoir l'arrivée directe dans la salle (sans animation d'entrée).
-- La caméra est fixe (`FOV 30`, `z = 10`, calée sur le DOM par `metrics.wpp`). Pour la salle : animer la caméra (0,8–1,2 s, ease-in-out, interruptible) et étendre le rendu à la demande de `Stage.tsx` aux transitions et au parallax.
-- Bloquer le scroll pendant la salle (`lockScroll(true)`), et restaurer la position du carrousel à la sortie (`metrics.work.top + active * step`).
-- Le cylindre boucle : au projet 01, le voisin de gauche est le 07 (cohérent avec « ← 07 MAP » dans la salle).
-- Captures disponibles pour les 3 écrans muraux : voir le tableau « Captures » plus bas (plusieurs projets n'en ont qu'une).
+- **L'URL est la source de vérité** (`room/RoomController.tsx`, dans le layout) : `/projects/[slug]` + `quality === 'full'` = salle ouverte sur ce projet.
+  - Depuis le carrousel : `openRoom(index)` = `history.pushState` (pas de navigation, la page d'accueil reste montée) ; clic sur l'écran actif ou sur la ligne du projet actif.
+  - Chargement direct : la page projet classique est rendue par le serveur (SEO, version légère), puis la salle s'ouvre par-dessus sans animation d'entrée (`room.t = 1`).
+  - Fermeture (Échap, `> FERMER <` dans l'en-tête, retour arrière) : `history.back()` si on venait du carrousel, sinon `router.push('/')` ; dans les deux cas le carrousel est recalé sur le projet quitté (`history.scrollRestoration = 'manual'` pendant la salle, sinon le navigateur écrase la position).
+  - `← →` (ou les liens du panneau) : `history.replaceState` vers le projet voisin, calculé depuis l'URL (appuis rapides sûrs).
+  - Pendant la salle : scroll bloqué (`lockScroll(true, 'room')`, les verrous ont maintenant une clé par demandeur), `main` et `footer` inertes, focus sur FERMER, titre de l'onglet = nom du projet ; à la sortie, focus rendu au lien de l'écran.
+- **`three/roomState.ts`** : `room.t` avance linéairement vers `room.target` (1,1 s, `roomEase()` cubique) : inverser la cible inverse le mouvement, la transition est interruptible à tout moment. `roomFlash()` = flash de grain autour de t = 0,5 (et à chaque changement de projet, `room.swap`).
+- **`three/ControlRoom.tsx`** : `CameraRig` (une seule caméra : fixe FOV 30 pour le carrousel ; avancée vers l'écran actif ; puis salle en FOV 40, glissement exponentiel vers la vue choisie, parallax curseur à ressort) et `ControlRoom` (sol et mur quadrillés opaques, 3 écrans muraux avec le shader écran en noir et blanc, cadres filaires, 3 pupitres filaires, voyants accent). Sans lumière : matériaux non éclairés.
+- **Écrans** (`lib/data/roomScreens.ts`) : centre = couverture, gauche = 1re capture large, droite = capture mobile (format portrait) ou 2e capture large. Un écran sans capture reste éteint (voyant gris, pas de miniature). L'écran visé par une miniature retrouve sa couleur et ses franges.
+- **`room/RoomPanel.tsx`** : PROJET (Geist Pixel) · INFO (phrase-histoire + liens) · RÔLE + stack · miniatures (`aria-pressed`, re-clic = vue d'ensemble) · voisins `← 02 … / 04 … →`.
+- **`three/Stage.tsx`** : fait avancer `room.t`, passe le canvas devant le HTML (`z-index: 80`, sous l'en-tête) avec un fond qui s'opacifie, pilote le flash, et étend le rendu à la demande à la salle (0 dessin par seconde au repos, mesuré). `SceneRoot` monte aussi la scène sur `/projects/*`.
+- **`three/screenMaterial.ts`** : shader écran partagé carrousel / salle (`uMono`, `uFringe` ajoutés).
+- **Vérifié** (Chrome, GPU Apple M2, build de production) : entrée au clic (URL, focus, titre), miniatures, ← → (y compris appuis rapides), Échap, interruption à mi-course, retour arrière du navigateur, FERMER, sortie sur le bon projet du carrousel, chargement direct puis fermeture vers le carrousel, menu par-dessus la salle (Échap ne ferme que le menu), reduced motion (page classique, pas de salle), 0 erreur console.
+
+## Notes pour la phase 5 (Opus 5.5)
+
+- Conditions actuelles de la 3D (`three/SceneRoot.tsx`) : `/` ou `/projects/*`, largeur ≥ 1024 px, WebGL, hors reduced motion, hors « version légère ». À compléter : `detect-gpu` (tier < 2 → lite), FPS < 30 pendant 2 s → lite, perte de contexte WebGL.
+- Chargement direct en version complète : la page projet classique s'affiche un court instant avant que la salle la recouvre (le texte d'abord, la 3D ensuite). À juger : la masquer plus tôt ou garder.
+- Passage cartes → section fixée quand `quality` devient `full` : la hauteur de la page change (sous l'écran de démarrage à la première visite).
+- Sous 768 px : carrousel à transformer en scroll-snap horizontal ; la « salle » reste la page projet classique (déjà le cas).
+- Salle sur fenêtre basse (≈ 720 px) : le panneau (max 46 svh) recouvre le bas des écrans ; à ajuster (texte plus court ou caméra relevée).
+- Accessibilité à revoir : le panneau de la salle est une `section` étiquetée, pas un `dialog` ; contrastes de `text-fg-3` sur `bg-bg/90`.
 
 ## Direction (5 lignes)
 
