@@ -2,7 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useSpring } from 'framer-motion'
-import { finePointerQuery } from '@/lib/motion'
+import { finePointerQuery, reducedMotionQuery } from '@/lib/motion'
 
 const MAX = 6
 
@@ -13,7 +13,7 @@ export function Magnetic({ children, className }: { children: React.ReactNode; c
   const y = useSpring(0, { stiffness: 260, damping: 18, mass: 0.6 })
 
   const onMove = (e: React.PointerEvent) => {
-    if (e.pointerType !== 'mouse' || !window.matchMedia(finePointerQuery).matches) return
+    if (e.pointerType !== 'mouse' || !window.matchMedia(finePointerQuery).matches || window.matchMedia(reducedMotionQuery).matches) return
     const r = ref.current!.getBoundingClientRect()
     const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2)
     const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2)

@@ -25,7 +25,7 @@ export function Header() {
           </Link>
 
           {inRoom ? (
-            <button id="room-close" type="button" onClick={() => roomActions.close()} className="ui invert-hover press inline-flex min-h-11 items-center px-3.5">
+            <button id="room-close" type="button" onClick={() => roomActions.close()} aria-label="Fermer le projet et revenir aux projets" className="ui invert-hover press inline-flex min-h-11 items-center px-3.5">
               &gt; FERMER &lt;
             </button>
           ) : (

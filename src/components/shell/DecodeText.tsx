@@ -38,7 +38,11 @@ export function DecodeText({ text, className }: { text: string; className?: stri
   return (
     <span className={className} onPointerEnter={run}>
       <span aria-hidden>{shown}</span>
-      <span className="sr-only">{text}</span>
+      {/* Version lue : sans les flèches ni crochets décoratifs ; un lien ↗ s'ouvre dans un nouvel onglet. */}
+      <span className="sr-only">
+        {text.replace(/[↗→←[\]]/g, '').trim()}
+        {text.includes('↗') ? ' (nouvel onglet)' : ''}
+      </span>
     </span>
   )
 }

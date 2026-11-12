@@ -232,18 +232,19 @@ const v = {
 }
 
 /** Pose de la caméra dans la salle : vue d'ensemble, ou face à l'un des trois écrans. */
-function roomPose(focus: number, aspect: number, pos: THREE.Vector3, look: THREE.Vector3) {
+function roomPose(focus: number, aspect: number, pos: THREE.Vector3, look: THREE.Vector3, usable = 1) {
+  const tan = Math.tan((ROOM_FOV * Math.PI) / 360)
   if (focus < 0 || focus >= SLOTS.length) {
-    // Assez de recul pour voir les trois écrans, quelle que soit la forme de la fenêtre.
-    const z = Math.max(9.2, 7.7 / (Math.tan((ROOM_FOV * Math.PI) / 360) * aspect))
+    // Assez de recul pour voir les trois écrans (en largeur) et les écrans + pupitres (en hauteur utile).
+    const z = Math.max(9.2, 7.7 / (tan * aspect), 2.1 / (tan * usable))
     pos.set(0, 1.75, z)
-    look.set(0, 1.25, 0)
+    look.set(0, 1.9, 0)
     return
   }
   const s = SLOTS[focus]
-  const d = focus === 0 ? 6.4 : 5.6
+  const d = Math.max(focus === 0 ? 6.4 : 5.6, 1.3 / (tan * usable))
   pos.set(s.x + Math.sin(s.rot) * d, 1.95, s.z + Math.cos(s.rot) * d)
-  look.set(s.x, s.y - 0.7, s.z)
+  look.set(s.x, s.y, s.z)
 }
 
 /**
@@ -270,6 +271,7 @@ export function CameraRig() {
     const e = roomEase()
     const dt = Math.min(delta, 0.05)
 
+    if (e < 0.5 && cam.view?.enabled) cam.clearViewOffset()
     if (e <= 0) {
       if (c.mode !== 'flat') {
         c.mode = 'flat'
@@ -305,7 +307,11 @@ export function CameraRig() {
     c.mode = 'room'
     const b = (e - 0.5) / 0.5
     const { roomFocus, pointer } = ui.getState()
-    roomPose(roomFocus, state.size.width / state.size.height, v.a, v.b)
+    // Espace utile : entre l'en-tête et le panneau d'infos. La caméra recule pour que tout y tienne.
+    const { width: W, height: H } = state.size
+    const header = 72
+    const usable = Math.max(0.35, (H - header - room.panelH) / H)
+    roomPose(roomFocus, W / H, v.a, v.b, usable)
     if (!c.init) {
       c.init = true
       c.pos.copy(v.a)
@@ -330,6 +336,10 @@ export function CameraRig() {
     v.look.copy(c.look)
     v.look.x += c.px * 0.12
     cam.lookAt(v.look)
+    // Décale l'image vers le haut : le centre du cadrage tombe au milieu de l'espace utile, pas derrière le panneau.
+    const shift = Math.round((room.panelH - header) / 2)
+    if (shift > 0) cam.setViewOffset(W, H, 0, shift, W, H)
+    else if (cam.view?.enabled) cam.clearViewOffset()
     if (cam.fov !== ROOM_FOV) {
       cam.fov = ROOM_FOV
       cam.updateProjectionMatrix()

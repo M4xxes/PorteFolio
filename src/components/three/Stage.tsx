@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { Canvas, advance } from '@react-three/fiber'
 import { addFrame } from '@/lib/loop'
 import { ui } from '@/lib/store'
+import { readLiteMode, reportPerf } from '@/lib/quality'
 import { projects } from '@/lib/data/projects'
 import { HeroParticles } from './HeroParticles'
 import { ProjectCarousel } from './ProjectCarousel'
@@ -13,6 +14,10 @@ import { ROOM_DURATION, room, roomEase, roomFlash } from './roomState'
 
 /** Sans mouvement (scroll, curseur) pendant ce délai, la scène n'est plus redessinée. */
 const IDLE_MS = 1500
+/** Surveillance des performances : ignorée au démarrage (compilation des shaders, envoi des textures). */
+const WATCH_AFTER_MS = 1500
+const WATCH_WINDOW_MS = 2000
+const MIN_FPS = 30
 
 function markDrawn() {
   if (document.documentElement.dataset.scene === 'on') return
@@ -32,6 +37,7 @@ function markDrawn() {
 export default function Stage() {
   const wrap = useRef<HTMLDivElement>(null)
   const flash = useRef<HTMLDivElement>(null)
+  const disposed = useRef(false)
 
   useEffect(() => {
     const html = document.documentElement
@@ -42,6 +48,27 @@ export default function Stage() {
     let px = 0
     let py = 0
     let front = false
+    // Surveillance : images/s mesurées seulement sur des frames dessinées à la suite (rendu continu).
+    const mountedAt = performance.now()
+    const watch = readLiteMode() === 'auto'
+    let renderedLast = false
+    let windowMs = 0
+    let windowFrames = 0
+    const render = (time: number, delta: number) => {
+      advance(time / 1000)
+      if (watch && renderedLast && time - mountedAt > WATCH_AFTER_MS) {
+        windowMs += delta
+        windowFrames++
+        if (windowMs >= WATCH_WINDOW_MS) {
+          const fps = (windowFrames * 1000) / windowMs
+          windowMs = 0
+          windowFrames = 0
+          // Trop lent : version légère pour le reste de la session (le visiteur peut la désactiver).
+          if (fps < MIN_FPS) reportPerf('fps')
+        }
+      }
+      renderedLast = true
+    }
 
     measure()
     const ro = new ResizeObserver(measure)
@@ -49,6 +76,8 @@ export default function Stage() {
     window.addEventListener('resize', measure)
 
     const stop = addFrame((time, delta) => {
+      const rendered = renderedLast
+      renderedLast = false
       const { scroll, pointer, work } = ui.getState()
 
       // Transition carrousel ↔ salle : progression linéaire vers la cible, donc réversible à tout moment.
@@ -75,7 +104,8 @@ export default function Stage() {
 
       if (inRoom) {
         if (idle && room.t === room.target && room.swap <= 0) return
-        advance(time / 1000)
+        renderedLast = rendered
+        render(time, delta)
         markDrawn()
         return
       }
@@ -101,10 +131,13 @@ export default function Stage() {
         cleared = 0
         if (!hero && idle) return
       }
-      advance(time / 1000)
+      renderedLast = rendered
+      render(time, delta)
     }, 20)
 
+    disposed.current = false
     return () => {
+      disposed.current = true
       stop()
       ro.disconnect()
       window.removeEventListener('resize', measure)
@@ -121,7 +154,16 @@ export default function Stage() {
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         camera={{ fov: FOV, position: [0, 0, CAMERA_Z], near: 0.1, far: 100 }}
-        onCreated={({ gl }) => gl.setClearColor(0x000000, 0)}
+        onCreated={({ gl }) => {
+          gl.setClearColor(0x000000, 0)
+          // Contexte WebGL perdu (pilote, mémoire) : retour à la version légère plutôt qu'un écran noir.
+          // (Au démontage, R3F provoque lui-même une perte de contexte : on l'ignore.)
+          gl.domElement.addEventListener(
+            'webglcontextlost',
+            () => setTimeout(() => !disposed.current && gl.domElement.isConnected && reportPerf('error'), 0),
+            { once: true }
+          )
+        }}
       >
         <CameraRig />
         <ProjectCarousel />

@@ -11,7 +11,7 @@ export function Container({ className, children, as: Tag = 'div' }: { className?
 export function Tag({ index, children, className }: { index?: string; children: ReactNode; className?: string }) {
   return (
     <p className={`ui text-fg-2 ${className ?? ''}`}>
-      {index && <span>[{index}] </span>}
+      {index && <span aria-hidden>[{index}] </span>}
       {children}
     </p>
   )

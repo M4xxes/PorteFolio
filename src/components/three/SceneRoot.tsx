@@ -4,21 +4,13 @@ import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { Component, useEffect, useState, type ReactNode } from 'react'
 import { reducedMotionQuery } from '@/lib/motion'
-import { ui, useUI } from '@/lib/store'
+import { gpuIsCapable, readLiteMode, readPerf, reportPerf, webglAvailable } from '@/lib/quality'
+import { ui, useUI, type LiteReason } from '@/lib/store'
 
 // three + R3F ne sont jamais dans le bundle initial : chargés après le premier rendu, côté client seulement.
 const Stage = dynamic(() => import('./Stage'), { ssr: false })
 
-function webglAvailable() {
-  try {
-    const c = document.createElement('canvas')
-    return Boolean(c.getContext('webgl2') || c.getContext('webgl'))
-  } catch {
-    return false
-  }
-}
-
-/** Si la scène plante (contexte WebGL perdu, shader refusé…), on repasse en version légère sans casser la page. */
+/** Si la scène plante (shader refusé, contexte WebGL perdu…), on repasse en version légère sans casser la page. */
 class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false }
   static getDerivedStateFromError() {
@@ -27,7 +19,7 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
   componentDidCatch(error: unknown) {
     console.error('Scène 3D désactivée :', error)
     document.documentElement.removeAttribute('data-scene')
-    ui.setState({ scene: 'off', quality: 'lite' })
+    reportPerf('error')
   }
   render() {
     return this.state.failed ? null : this.props.children
@@ -35,42 +27,65 @@ class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean
 }
 
 /**
- * Décide si la scène 3D est montée. Pour l'instant : accueil et pages projet (salle de contrôle), écran ≥ 1024 px, WebGL disponible,
- * hors reduced motion et hors « version légère ». La détection fine (GPU, FPS) arrive en phase 5.
- * Sinon, les versions statiques restent en place (sphère SVG, cartes 2D).
+ * Décide si la scène 3D est montée (règles dans `lib/quality.ts`).
+ * Sinon, les versions statiques restent en place : sphère SVG, cartes 2D, page projet classique.
  */
 export function SceneRoot() {
   const pathname = usePathname()
-  const liteForced = useUI((s) => s.liteForced)
+  const liteMode = useUI((s) => s.liteMode)
+  const perf = useUI((s) => s.perf)
   const [mount, setMount] = useState(false)
+
+  // Préférences mémorisées : lues une fois, après l'hydratation.
+  useEffect(() => {
+    ui.setState({ liteMode: readLiteMode(), perf: readPerf() })
+  }, [])
 
   useEffect(() => {
     const wide = window.matchMedia('(min-width: 1024px)')
     const reduced = window.matchMedia(reducedMotionQuery)
-    let idle = 0
+    let timer = 0
+    let cancelled = false
 
-    const decide = () => {
-      const ok = (pathname === '/' || pathname.startsWith('/projects/')) && !liteForced && wide.matches && !reduced.matches && webglAvailable()
-      if (!ok) {
-        setMount(false)
-        ui.setState({ scene: 'off', quality: 'lite' })
-        return
-      }
+    const lite = (reason: LiteReason) => {
+      setMount(false)
+      ui.setState({ scene: 'off', quality: 'lite', liteReason: reason })
+    }
+    const full = () => {
       // `quality: 'full'` dès la décision : la mise en page fixée du carrousel s'installe tout de suite,
       // avec la capture HTML du projet actif en attendant que la scène dessine.
-      ui.setState({ scene: 'loading', quality: 'full' })
+      ui.setState({ scene: 'loading', quality: 'full', liteReason: null })
       // Après le premier rendu : le texte s'affiche avant que la 3D ne soit téléchargée.
-      idle = window.setTimeout(() => setMount(true), 60)
+      timer = window.setTimeout(() => !cancelled && setMount(true), 60)
+    }
+
+    const decide = () => {
+      clearTimeout(timer)
+      const mode = readLiteMode()
+      if (pathname !== '/' && !pathname.startsWith('/projects/')) return lite('route')
+      if (reduced.matches) return lite('motion')
+      if (!wide.matches) return lite('small')
+      if (!webglAvailable()) return lite('webgl')
+      if (mode === 'on') return lite('manual')
+      if (perf === 'error') return lite('error')
+      if (mode === 'auto' && (perf === 'gpu' || perf === 'fps')) return lite(perf)
+      if (mode === 'off' || perf === 'ok') return full()
+      // Premier passage de la session : test du GPU (quelques dizaines de ms, données servies par le site).
+      gpuIsCapable().then((ok) => {
+        if (cancelled) return
+        reportPerf(ok ? 'ok' : 'gpu')
+      })
     }
     decide()
     wide.addEventListener('change', decide)
     reduced.addEventListener('change', decide)
     return () => {
-      clearTimeout(idle)
+      cancelled = true
+      clearTimeout(timer)
       wide.removeEventListener('change', decide)
       reduced.removeEventListener('change', decide)
     }
-  }, [pathname, liteForced])
+  }, [pathname, liteMode, perf])
 
   return mount ? (
     <SceneBoundary>

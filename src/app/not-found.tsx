@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Button, Container, Tag } from '@/components/ui/Kit'
+import { G } from '@/components/ui/Glyph'
 
 export const metadata: Metadata = {
   title: 'Page introuvable',
@@ -17,7 +18,7 @@ export default function NotFound() {
         <h1 className="pixel mt-10 text-[clamp(2rem,4.5vw,4rem)]">Signal perdu.</h1>
         <p className="mt-4 max-w-md text-fg-2">L’adresse est peut-être erronée, ou la page a été déplacée. Les projets, eux, sont toujours là.</p>
         <div className="mt-10 flex flex-wrap gap-2">
-          <Button href="/#work">[→] Voir les projets</Button>
+          <Button href="/#work"><G>[→]</G> Voir les projets</Button>
           <Button href="/" variant="text">
             Accueil
           </Button>

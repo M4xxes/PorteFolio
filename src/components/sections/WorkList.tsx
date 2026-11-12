@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { projects } from '@/lib/data/projects'
 import { useUI } from '@/lib/store'
+import { G } from '@/components/ui/Glyph'
 
 const num = (i: number) => String(i + 1).padStart(2, '0')
 
@@ -26,7 +27,7 @@ export function WorkList({ onPick }: { onPick?: (index: number, e: React.MouseEv
                 className={`ui nudge flex min-h-9 items-center gap-2.5 py-1.5 ${on ? 'text-fg' : 'text-fg-3'}`}
               >
                 <span aria-hidden className={`size-[7px] shrink-0 ${on ? 'bg-accent' : 'bg-transparent'}`} />
-                [{num(i)}] {p.short}
+                <G>[{num(i)}]</G> {p.short}
               </Link>
             </li>
           )

@@ -15,6 +15,10 @@ export const room = {
   swap: 0,
   /** Vrai si la salle a été ouverte par un chargement direct (pas d'animation d'entrée). */
   instant: false,
+  /** Hauteur (px) du panneau d'infos : la caméra cadre la salle dans l'espace restant au-dessus. */
+  panelH: 0,
+  /** Fermeture demandée par la salle (Échap, FERMER) : le carrousel se recale sur le projet quitté. */
+  closing: false,
 }
 
 /** Actions de la salle, branchées par `RoomController` (fermer, projet voisin). */

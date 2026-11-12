@@ -2,6 +2,7 @@ import { DotSphere } from '@/components/fallback/DotSphere'
 import { Button } from '@/components/ui/Kit'
 import { projects } from '@/lib/data/projects'
 import { skillCount } from '@/lib/data/skills'
+import { G } from '@/components/ui/Glyph'
 
 const pad = (n: number) => String(n).padStart(3, '0')
 
@@ -52,7 +53,7 @@ export function Hero() {
               Node.js. En Bachelor Informatique à Ynov Lyon.
             </p>
             <div className="flex flex-wrap gap-2">
-              <Button href="/#work">[→] Voir les projets</Button>
+              <Button href="/#work"><G>[→]</G> Voir les projets</Button>
               <Button href="/#contact" variant="text">
                 M’écrire
               </Button>

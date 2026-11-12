@@ -3,6 +3,7 @@ import { isContactFormEnabled } from '@/lib/contact'
 import { ContactForm } from '@/components/contact/ContactForm'
 import { CopyEmail } from '@/components/contact/CopyEmail'
 import { Container, Tag } from '@/components/ui/Kit'
+import { G } from '@/components/ui/Glyph'
 
 export function Contact() {
   const formEnabled = isContactFormEnabled()
@@ -24,7 +25,8 @@ export function Contact() {
               href={`mailto:${site.email}`}
               className="ui mt-6 inline-block break-all border-b border-fg pb-1 text-[clamp(0.8125rem,1.4vw,1rem)] hover:text-accent"
             >
-              {site.email} ↗
+              {site.email}
+              <G> ↗</G>
             </a>
             <div className="mt-6">
               <CopyEmail email={site.email} />

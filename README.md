@@ -11,6 +11,16 @@ Arcade futuriste, épurée, sombre par défaut. Suivi de la refonte : `PROGRESS.
 - Une seule boucle d'animation (`src/lib/loop.ts`) : Lenis puis le curseur (et la scène 3D à partir de la phase 2). Le défilement et le pointeur sont publiés dans un store `zustand` (`src/lib/store.ts`), lu sans re-render.
 - Écran de démarrage : accueil uniquement, une fois par session, écran ≥ 768 px à pointeur fin, hors reduced motion et hors version légère. Décidé par un script en ligne avant le premier rendu ; sans JavaScript, il ne s'affiche jamais.
 
+## Version complète (3D) ou légère
+
+Règles dans `src/lib/quality.ts`. La 3D n'est montée que sur `/` et `/projects/[slug]`, écran ≥ 1024 px, WebGL disponible, hors `prefers-reduced-motion`. Elle se coupe d'elle-même si le GPU est trop faible (detect-gpu), si les images/s restent sous 30, ou en cas d'erreur. Bascule manuelle « Version légère » dans le pied de page.
+
+Les données de référence de detect-gpu sont servies par le site (`public/detect-gpu/`). Après une mise à jour du paquet :
+
+```bash
+cp node_modules/detect-gpu/dist/benchmarks/*.json public/detect-gpu/
+```
+
 ## Démarrer
 
 ```bash

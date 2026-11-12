@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { Button, Container, Tag } from '@/components/ui/Kit'
+import { G } from '@/components/ui/Glyph'
 
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -18,7 +19,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
         <p className="mt-6 max-w-md text-fg-2">Un problème inattendu a empêché l’affichage de la page. Vous pouvez réessayer ou revenir à l’accueil.</p>
         <div className="mt-10 flex flex-wrap gap-2">
           <button type="button" onClick={reset} className="ui press inline-flex min-h-11 items-center bg-accent px-5 py-4 tracking-[0.1em] text-accent-ink">
-            [↻] Réessayer
+            <G>[↻]</G> Réessayer
           </button>
           <Button href="/" variant="text">
             Accueil

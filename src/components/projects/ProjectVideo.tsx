@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import { G } from '@/components/ui/Glyph'
 
 type Video = { src: string; poster: string; width: number; height: number; duration: number }
 
@@ -70,7 +71,7 @@ export function ProjectVideo({ video, label, url }: { video: Video; label: strin
           onClick={toggle}
           className="ui press absolute bottom-4 left-4 inline-flex min-h-11 items-center gap-3 bg-fg px-4 text-bg hover:bg-accent"
         >
-          {playing ? '[||] PAUSE' : '[▶] LIRE LA VISITE'}
+          <G>{playing ? '[||]' : '[▶]'}</G> {playing ? 'PAUSE' : 'LIRE LA VISITE'}
           <span className="doto text-base">{video.duration} S</span>
         </button>
       </div>

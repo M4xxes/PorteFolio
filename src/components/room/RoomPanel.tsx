@@ -1,12 +1,14 @@
 'use client'
 
 import Image from 'next/image'
+import { useEffect, useRef } from 'react'
 import { projects } from '@/lib/data/projects'
 import { roomScreens } from '@/lib/data/roomScreens'
 import { site } from '@/lib/constants'
 import { ui, useUI } from '@/lib/store'
 import { poke } from '@/components/three/heroTimeline'
 import { room, roomActions } from '@/components/three/roomState'
+import { Ext, G } from '@/components/ui/Glyph'
 
 const N = projects.length
 const num = (i: number) => String(i + 1).padStart(2, '0')
@@ -17,6 +19,21 @@ const num = (i: number) => String(i + 1).padStart(2, '0')
  */
 export function RoomPanel({ index }: { index: number }) {
   const focus = useUI((s) => s.roomFocus)
+  const ref = useRef<HTMLElement>(null)
+
+  // La caméra cadre la salle au-dessus du panneau : on lui transmet sa hauteur.
+  useEffect(() => {
+    const el = ref.current!
+    const ro = new ResizeObserver(() => {
+      room.panelH = el.offsetHeight
+      poke()
+    })
+    ro.observe(el)
+    return () => {
+      ro.disconnect()
+      room.panelH = 0
+    }
+  }, [])
   const project = projects[index]
   const screens = roomScreens(project)
   const prev = (index - 1 + N) % N
@@ -35,10 +52,11 @@ export function RoomPanel({ index }: { index: number }) {
 
   return (
     <section
+      ref={ref}
       aria-label={`Projet ${project.title}`}
       data-instant={room.instant}
       data-lenis-prevent
-      className="room-panel fixed inset-x-0 bottom-0 z-[85] max-h-[46svh] overflow-y-auto border-t border-line bg-bg/90 px-[var(--gutter)] pb-6 pt-5"
+      className="room-panel fixed inset-x-0 bottom-0 z-[85] max-h-[46svh] overflow-y-auto border-t border-line bg-bg/95 px-[var(--gutter)] pb-6 pt-5"
     >
       <div className="grid gap-x-6 gap-y-6 lg:grid-cols-12">
         <div className="lg:col-span-3">
@@ -56,12 +74,13 @@ export function RoomPanel({ index }: { index: number }) {
           <p className="ui mt-4 flex flex-wrap gap-x-5 gap-y-2">
             {project.demoUrl && (
               <a href={project.demoUrl} target="_blank" rel="noreferrer" className="hover:text-accent">
-                [Voir le site ↗]
+                <G>[</G>Voir le site<Ext />
+                <G>]</G>
               </a>
             )}
             {repoHref && (
               <a href={repoHref} target="_blank" rel="noreferrer" className="hover:text-accent">
-                GitHub ↗
+                GitHub<Ext />
               </a>
             )}
           </p>
@@ -100,11 +119,11 @@ export function RoomPanel({ index }: { index: number }) {
             )}
           </ul>
           <p className="ui flex justify-between gap-4">
-            <a href={`/projects/${projects[prev].id}`} onClick={go(-1)} className="nudge inline-flex min-h-11 items-center hover:text-accent">
-              ← {num(prev)} {projects[prev].short.split(' ')[0]}
+            <a href={`/projects/${projects[prev].id}`} onClick={go(-1)} className="nudge inline-flex min-h-11 items-center gap-[0.6em] hover:text-accent">
+              <G>←</G>{num(prev)} {projects[prev].short.split(' ')[0]}
             </a>
-            <a href={`/projects/${projects[next].id}`} onClick={go(1)} className="nudge inline-flex min-h-11 items-center text-right hover:text-accent">
-              {num(next)} {projects[next].short.split(' ')[0]} →
+            <a href={`/projects/${projects[next].id}`} onClick={go(1)} className="nudge inline-flex min-h-11 items-center gap-[0.6em] text-right hover:text-accent">
+              {num(next)} {projects[next].short.split(' ')[0]}<G>→</G>
             </a>
           </p>
         </div>

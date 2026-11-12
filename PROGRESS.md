@@ -10,8 +10,8 @@ Mémoire commune entre les modèles. À relire au début de chaque phase, avec l
 | 1 — Fondations de l'interface | Opus 5.5 | **Terminée** (commit `phase-1`) |
 | 2 — Hero 3D | Fable 5.2 | Terminée (commit `phase-2`) |
 | 3 — Carrousel 3D + shader écran | Fable 5.2 | Terminée (commit `phase-3`) |
-| 4 — Salle de contrôle + caméra | Fable 5.2 | **Terminée** (commit `phase-4`), à montrer à Maxime avant la phase 5 |
-| 5 — Secours, mobile, a11y | Opus 5.5 | À faire |
+| 4 — Salle de contrôle + caméra | Fable 5.2 | Terminée (commit `phase-4`) |
+| 5 — Secours, mobile, a11y | Opus 5.5 | **Terminée** (commit `phase-5`) |
 | 6 — Polish | Sonnet 5.5 | À faire |
 | 7 — Vérification | Sonnet 5.5 | À faire |
 
@@ -70,14 +70,29 @@ Point de départ : commit `dc33fcd` (refonte crème / orange). Elle sera remplac
 - **`three/screenMaterial.ts`** : shader écran partagé carrousel / salle (`uMono`, `uFringe` ajoutés).
 - **Vérifié** (Chrome, GPU Apple M2, build de production) : entrée au clic (URL, focus, titre), miniatures, ← → (y compris appuis rapides), Échap, interruption à mi-course, retour arrière du navigateur, FERMER, sortie sur le bon projet du carrousel, chargement direct puis fermeture vers le carrousel, menu par-dessus la salle (Échap ne ferme que le menu), reduced motion (page classique, pas de salle), 0 erreur console.
 
-## Notes pour la phase 5 (Opus 5.5)
+## Phase 5 — ce qui est fait
 
-- Conditions actuelles de la 3D (`three/SceneRoot.tsx`) : `/` ou `/projects/*`, largeur ≥ 1024 px, WebGL, hors reduced motion, hors « version légère ». À compléter : `detect-gpu` (tier < 2 → lite), FPS < 30 pendant 2 s → lite, perte de contexte WebGL.
-- Chargement direct en version complète : la page projet classique s'affiche un court instant avant que la salle la recouvre (le texte d'abord, la 3D ensuite). À juger : la masquer plus tôt ou garder.
-- Passage cartes → section fixée quand `quality` devient `full` : la hauteur de la page change (sous l'écran de démarrage à la première visite).
-- Sous 768 px : carrousel à transformer en scroll-snap horizontal ; la « salle » reste la page projet classique (déjà le cas).
-- Salle sur fenêtre basse (≈ 720 px) : le panneau (max 46 svh) recouvre le bas des écrans ; à ajuster (texte plus court ou caméra relevée).
-- Accessibilité à revoir : le panneau de la salle est une `section` étiquetée, pas un `dialog` ; contrastes de `text-fg-3` sur `bg-bg/90`.
+- **`lib/quality.ts`** : toutes les règles version complète / légère.
+  - Raisons dures (non contournables) : page sans scène (`route`), écran < 1024 px (`small`), `prefers-reduced-motion` (`motion`), pas de WebGL (`webgl`).
+  - Raisons souples : GPU faible (`gpu`, detect-gpu tier < 2 ou GPU sur liste noire), < 30 images/s pendant 2 s de rendu continu (`fps`), scène en erreur ou contexte WebGL perdu (`error`). Verdict mémorisé pour la session (`sessionStorage portfolio:perf`).
+  - Choix du visiteur (`localStorage portfolio:lite`) : `1` = forcée, `0` = désactivée (ignore les raisons souples et efface le verdict), absent = auto.
+- **detect-gpu** chargé à la demande, seulement quand la 3D est envisageable ; données de référence **auto-hébergées** dans `public/detect-gpu/` (aucune requête vers unpkg). À recopier si la version de detect-gpu change (voir README). Délai max 2,5 s ; en cas de doute, la surveillance des images/s prend le relais.
+- **Store** : `liteForced` remplacé par `liteMode` (`auto` / `on` / `off`), `liteReason`, `perf`.
+- **`three/Stage.tsx`** : surveillance des images/s (ignorée pendant 1,5 s au démarrage, fenêtres de 2 s, frames consécutives seulement, mode auto uniquement) ; perte de contexte WebGL → `error` (sauf celle que R3F provoque lui-même au démontage).
+- **Pied de page** (`LiteToggle`) : état réel + raison (« Version légère : ON · GPU limité »). Bouton si la raison est souple ou manuelle, simple texte si elle est dure.
+- **Mobile < 768 px** : les cartes deviennent un carrousel horizontal à aimantation (scroll-snap, 86 % de largeur), la carte la plus visible devient active dans la liste, compteur « 02 / 07 » + « Glisser ← → » en dessous. Correction d'un débordement de page (colonne de grille sans `min-w-0`). La salle reste la page projet classique sur mobile (pas de 3D).
+- **Lecteurs d'écran** : signes décoratifs masqués (`ui/Glyph.tsx` : `G`, `Ext`, `SrOnly`) ; liens externes annoncés « (nouvel onglet) » ; « > FERMER < » étiquetés (« Fermer le menu », « Fermer le projet et revenir aux projets », « Fermer : retour aux projets ») ; annonce `role="status"` à l'ouverture de la salle et à chaque ← → ; les 4 étapes de la méthode sont lues sur desktop (liste `md:sr-only`, bloc fixé `aria-hidden`).
+- **Contrastes** (WCAG, calculés) : `--fg-3` passe de `#7C7C77` à `#848480` (4,7:1 sur la surface, 5,2:1 sur le fond ; avant 4,2:1 sur la surface) ; `--line-strong` à 42 % (bordure des champs 3,6:1, ≥ 3:1 requis) ; panneau de la salle à 95 % d'opacité. `fg` 16,6:1, `fg-2` 6,9:1, accent 16,9:1, erreur 8,5:1.
+- **Reduced motion** : effet magnétique coupé (en plus de Lenis, curseur, démarrage, 3D, cascades déjà coupés).
+- **Salle** : la caméra cadre la salle dans l'espace entre l'en-tête et le panneau (`setViewOffset` + recul selon la hauteur utile) : plus d'écran caché derrière le panneau sur une fenêtre basse. Sortie de la salle vers une ancre (PARLONS-EN, menu) : la page va bien à l'ancre ; sortie par Échap / FERMER : recalage sur le projet quitté. Espaces des liens « ← 01 … » rétablis.
+- **Vérifié** (Chrome, build de production) : détection auto (requête `/detect-gpu/d-apple.json` servie par le site), GPU faible simulé → version légère avec raison, bascule manuelle dans les deux sens, perte de contexte simulée → version légère « erreur 3D », reduced motion, 900 px, 375 px sans débordement (accueil, 2 pages projet, 404), carrousel mobile au doigt, parcours Tab complet avec focus visible, salle (ouverture, ← →, Échap, retour arrière, FERMER, chargement direct, ancres), méthode lue en entier, régressions des phases 1 à 4, 0 erreur console.
+
+## Notes pour la phase 6 (Sonnet 5.5)
+
+- Les skills `emil-design-eng`, `animation-vocabulary`, `/impeccable` ne sont pas installés : travail à faire à la main, ou les installer avant.
+- Textes à relire : phrases-histoires (`lib/data/projects.ts`), méthode (`lib/data/method.ts`), à propos (`sections/About.tsx`), hero.
+- Points de polish repérés : moiré possible des lignes de balayage sur les captures très claires (Animarah) ; « Glisser ← → » sur mobile ; la page projet classique apparaît un court instant avant la salle au chargement direct.
+- Sons 8-bit (optionnels) : non faits ; « SON : OFF » est affiché sur l'écran de démarrage.
 
 ## Direction (5 lignes)
 
@@ -153,5 +168,5 @@ Voir le message de fin de phase 0. Intégration en phase 1 une fois validées.
 - **Sécurité** : `next@16.4.0` est touché par des vulnérabilités critiques (GHSA-2464-fhr4-w9xw, GHSA-p3m5-59mp-jv5r, GHSA-673q-mjm6-r5xr). Correctif : `next@16.4.6` (+ `eslint-config-next@16.4.6`). Le build s'arrête une fois sur un avertissement, puis passe à la relance. Mise à jour en attente de l'accord de Maxime.
 - Choix par défaut appliqués faute de réponse : Evastre sans espace admin (repo `Evasive`), « six malaxeurs » conservé, Map sans année.
 - Formulaire de contact masqué tant que `RESEND_API_KEY` n'est pas configurée (l'e-mail direct reste proposé).
-- Passage cartes → section fixée : la hauteur de la page change quand `quality` devient `full` (sous l'écran de démarrage à la première visite). À revoir en phase 5 si un décalage est visible au retour arrière.
+- Passage cartes → section fixée : la hauteur de la page change quand `quality` devient `full` (sous l'écran de démarrage à la première visite, sous le hero ensuite : pas de saut visible constaté).
 - Lighthouse ≥ 90 sur mobile vaut pour la version légère. En version complète, l'objectif est 60 fps sur un portable récent.

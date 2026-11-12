@@ -7,6 +7,9 @@ import { useStore } from 'zustand'
  * ou `ui.subscribe()` : aucun re-render React. Les hooks ne servent qu'aux valeurs discrètes.
  */
 export type Quality = 'pending' | 'full' | 'lite'
+export type LiteMode = 'auto' | 'on' | 'off'
+/** Raisons « dures » (route, écran, animations réduites, WebGL) : la 3D est impossible ou non souhaitée. */
+export type LiteReason = 'route' | 'small' | 'motion' | 'webgl' | 'manual' | 'gpu' | 'fps' | 'error'
 
 export interface UIState {
   /** Défilement : position (px), progression de la page (0–1), vitesse lissée (px/frame). */
@@ -20,8 +23,12 @@ export interface UIState {
   quality: Quality
   /** État de la scène 3D : en attente, en chargement, prête, ou non utilisée (version légère). */
   scene: 'idle' | 'loading' | 'ready' | 'off'
-  /** Choix manuel « version légère » (pied de page), prioritaire sur la détection. */
-  liteForced: boolean
+  /** Choix « version légère » du visiteur (pied de page) : auto, forcée, ou désactivée (pas de test de performance). */
+  liteMode: LiteMode
+  /** Pourquoi la version légère est active (null en version complète). */
+  liteReason: LiteReason | null
+  /** Verdict de performance de la session : GPU trop faible, images/s trop basses, scène en erreur. */
+  perf: 'unknown' | 'ok' | 'gpu' | 'fps' | 'error'
   menuOpen: boolean
 }
 
@@ -32,7 +39,9 @@ export const ui = createStore<UIState>()(() => ({
   roomFocus: -1,
   quality: 'pending',
   scene: 'idle',
-  liteForced: false,
+  liteMode: 'auto',
+  liteReason: null,
+  perf: 'unknown',
   menuOpen: false,
 }))
 

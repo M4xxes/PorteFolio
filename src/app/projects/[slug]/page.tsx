@@ -7,6 +7,7 @@ import { site } from '@/lib/constants'
 import { Button, Container } from '@/components/ui/Kit'
 import { PageTransition } from '@/components/ui/PageTransition'
 import { ProjectVideo } from '@/components/projects/ProjectVideo'
+import { Ext, G } from '@/components/ui/Glyph'
 
 type Params = { params: Promise<{ slug: string }> }
 
@@ -38,7 +39,7 @@ function Block({ index, title, children }: { index: string; title: string; child
   return (
     <section className="grid gap-6 border-t border-line py-12 lg:grid-cols-12 lg:gap-6 lg:py-16">
       <h2 className="ui text-fg-2 lg:col-span-4">
-        [{index}] {title}
+        <G>[{index}]</G> {title}
       </h2>
       <div className="lg:col-span-8">{children}</div>
     </section>
@@ -71,7 +72,7 @@ export default async function ProjectPage({ params }: Params) {
         <article>
           <Container as="header" className="pt-3">
             <div className="ui flex flex-wrap items-center justify-between gap-4 text-fg-2">
-              <Link href="/#work" className="nudge inline-flex min-h-11 items-center">
+              <Link href="/#work" aria-label="Fermer : retour aux projets" className="nudge inline-flex min-h-11 items-center gap-[0.6em]">
                 &gt; FERMER &lt;
               </Link>
               <p>
@@ -103,12 +104,12 @@ export default async function ProjectPage({ params }: Params) {
               <div className="flex flex-wrap content-start gap-2 lg:col-span-2 lg:col-start-11 lg:flex-col">
                 {project.demoUrl && (
                   <Button href={project.demoUrl} external>
-                    [→] Voir le site
+                    <G>[→]</G> Voir le site<Ext />
                   </Button>
                 )}
                 {repoHref && (
                   <Button href={repoHref} external variant="outline">
-                    GitHub ↗
+                    GitHub<Ext />
                   </Button>
                 )}
               </div>
@@ -189,7 +190,7 @@ export default async function ProjectPage({ params }: Params) {
               <Container>
                 <div className="mb-10 flex items-baseline justify-between border-t border-line pt-3">
                   <h2 id="gallery-title" className="ui text-fg-2">
-                    [{b()}] Galerie
+                    <G>[{b()}]</G> Galerie
                   </h2>
                   <p className="ui text-fg-3">
                     Captures réelles · <span className="doto text-lg text-fg">{String(gallery.length).padStart(2, '0')}</span>
@@ -211,7 +212,7 @@ export default async function ProjectPage({ params }: Params) {
                           />
                         </div>
                         <figcaption className="ui mt-3 text-fg-3">
-                          [{num(k)}] {img.alt}
+                          <G>[{num(k)}]</G> {img.alt}
                         </figcaption>
                       </figure>
                     )
@@ -224,11 +225,11 @@ export default async function ProjectPage({ params }: Params) {
 
         <nav aria-label="Projets voisins" className="border-t border-line">
           <Container className="ui flex flex-wrap justify-between gap-4 py-8">
-            <Link href={`/projects/${prev.id}`} className="nudge inline-flex min-h-11 items-center hover:text-accent">
-              ← {num(prevIndex)} {prev.short}
+            <Link href={`/projects/${prev.id}`} className="nudge inline-flex min-h-11 items-center gap-[0.6em] hover:text-accent">
+              <G>←</G>{num(prevIndex)} {prev.short}
             </Link>
-            <Link href={`/projects/${next.id}`} className="nudge inline-flex min-h-11 items-center text-right hover:text-accent">
-              {num(nextIndex)} {next.short} →
+            <Link href={`/projects/${next.id}`} className="nudge inline-flex min-h-11 items-center gap-[0.6em] text-right hover:text-accent">
+              {num(nextIndex)} {next.short}<G>→</G>
             </Link>
           </Container>
         </nav>

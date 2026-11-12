@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { methodSteps } from '@/lib/data/method'
 import { ui } from '@/lib/store'
 import { Container, SectionHead } from '@/components/ui/Kit'
+import { G } from '@/components/ui/Glyph'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -40,8 +41,8 @@ export function Method() {
         <SectionHead index="02" label="Méthode" title={<span id="method-title">Quatre étapes</span>} />
       </Container>
 
-      {/* Mobile : liste. */}
-      <Container className="md:hidden">
+      {/* Mobile : liste visible. Desktop : la même liste, lue par les lecteurs d'écran (le bloc fixé est visuel). */}
+      <Container className="md:sr-only">
         <ol className="mt-12 flex flex-col">
           {methodSteps.map((s, i) => (
             <li key={s.title} className="border-t border-line py-8">
@@ -56,7 +57,7 @@ export function Method() {
       </Container>
 
       {/* Desktop : étapes fixées pendant le défilement (une hauteur d'écran par étape). */}
-      <div ref={outer} className="relative hidden md:block" style={{ height: `${methodSteps.length * 60 + 40}vh` }}>
+      <div ref={outer} aria-hidden className="relative hidden md:block" style={{ height: `${methodSteps.length * 60 + 40}vh` }}>
         <div className="sticky top-0 flex h-svh flex-col justify-center">
           <Container className="grid grid-cols-12 gap-x-6">
             <div className="col-span-4 flex flex-col justify-between gap-12">
@@ -66,7 +67,7 @@ export function Method() {
               <ol className="flex flex-col" aria-label="Étapes">
                 {methodSteps.map((s, i) => (
                   <li key={s.title} aria-current={i === step ? 'step' : undefined} className={`ui flex items-center gap-2.5 py-1.5 ${i === step ? 'text-fg' : 'text-fg-3'}`}>
-                    <span aria-hidden className={`size-[7px] ${i === step ? 'bg-accent' : ''}`} />[{pad(i + 1)}] {s.title}
+                    <span aria-hidden className={`size-[7px] ${i === step ? 'bg-accent' : ''}`} /><G>[{pad(i + 1)}]</G> {s.title}
                   </li>
                 ))}
               </ol>

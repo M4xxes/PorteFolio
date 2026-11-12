@@ -10,6 +10,7 @@ import { STEP_VH, measure, metrics } from '@/components/three/heroTimeline'
 import { openRoom } from '@/components/room/RoomController'
 import { Tag } from '@/components/ui/Kit'
 import { WorkCounter, WorkList } from './WorkList'
+import { G } from '@/components/ui/Glyph'
 
 const N = projects.length
 const num = (i: number) => String(i + 1).padStart(2, '0')
@@ -108,7 +109,7 @@ export function WorkStage() {
         </Link>
 
         <p className="ui absolute bottom-8 left-[58%] -translate-x-1/2 whitespace-nowrap">
-          [{num(active)}] {project.short}
+          <G>[{num(active)}]</G> {project.short}
           {project.cover.kind === 'illustration' && <span className="text-fg-3"> · Visuel</span>}
         </p>
 

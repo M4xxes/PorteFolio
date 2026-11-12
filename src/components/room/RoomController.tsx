@@ -86,8 +86,17 @@ export function RoomController() {
           }
           if (last) window.history.scrollRestoration = 'auto'
         }
-        settle(false)
-        window.setTimeout(() => settle(true), 150)
+        // Sortie vers une ancre (PARLONS-EN, menu) : on laisse la page aller à l'ancre.
+        if (room.closing || !window.location.hash) {
+          settle(false)
+          window.setTimeout(() => settle(true), 150)
+        } else {
+          // Le défilement était bloqué quand le navigateur a voulu aller à l'ancre : on le fait maintenant.
+          window.history.scrollRestoration = 'auto'
+          const hash = window.location.hash
+          requestAnimationFrame(() => scrollToTarget(hash, true))
+        }
+        room.closing = false
         document.querySelector<HTMLElement>('a.screen-rect')?.focus({ preventScroll: true })
       } else {
         room.t = 0
@@ -100,6 +109,7 @@ export function RoomController() {
   useEffect(() => {
     roomActions.close = () => {
       if (ui.getState().work.mode !== 'room') return
+      room.closing = true
       if (fromHome.current && document.querySelector('[data-pinned]')) window.history.back()
       else router.push('/')
     }
@@ -132,5 +142,13 @@ export function RoomController() {
     }
   }, [open, active])
 
-  return open ? <RoomPanel index={active} /> : null
+  return (
+    <>
+      {/* Annonce du projet affiché (ouverture, ← →) pour les lecteurs d'écran. */}
+      <p role="status" className="sr-only">
+        {open ? `Salle du projet ${String(active + 1).padStart(2, '0')} sur ${String(N).padStart(2, '0')} : ${projects[active].title}. Flèches gauche et droite : projet voisin. Échap : fermer.` : ''}
+      </p>
+      {open ? <RoomPanel index={active} /> : null}
+    </>
+  )
 }

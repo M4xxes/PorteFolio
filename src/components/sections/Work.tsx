@@ -25,7 +25,7 @@ export function Work() {
   return (
     <section id="work" aria-labelledby="work-title" className="py-28 lg:py-40">
       <Container className="grid gap-x-6 gap-y-14 lg:grid-cols-12">
-        <div className="lg:col-span-4">
+        <div className="min-w-0 lg:col-span-4">
           <div className="flex flex-col gap-8 border-t border-line pt-3 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
             <Tag index="01">Travaux</Tag>
             <h2 id="work-title" className="pixel text-[clamp(2.75rem,5vw,4.5rem)]">
@@ -39,8 +39,15 @@ export function Work() {
             </div>
           </div>
         </div>
-        <div className="lg:col-span-8">
+        {/* min-w-0 : sans lui, la colonne de grille s'élargit à la taille du carrousel horizontal (mobile). */}
+        <div className="min-w-0 lg:col-span-8">
           <ProjectCards />
+          <div className="mt-6 flex items-end justify-between md:hidden">
+            <p className="ui text-fg-2" aria-hidden>
+              Glisser ← →
+            </p>
+            <WorkCounter />
+          </div>
         </div>
       </Container>
     </section>

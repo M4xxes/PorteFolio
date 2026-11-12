@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { G } from '@/components/ui/Glyph'
 
 export function CopyEmail({ email }: { email: string }) {
   const [copied, setCopied] = useState(false)
@@ -17,7 +18,7 @@ export function CopyEmail({ email }: { email: string }) {
 
   return (
     <button type="button" onClick={copy} className="ui press invert-hover inline-flex min-h-11 items-center border border-fg px-4">
-      {copied ? '[✓] COPIÉE' : '[ ] COPIER L’ADRESSE'}
+      <G>{copied ? '[✓]' : '[ ]'}</G> {copied ? 'COPIÉE' : 'COPIER L’ADRESSE'}
       <span role="status" className="sr-only">
         {copied ? 'Adresse e-mail copiée' : ''}
       </span>

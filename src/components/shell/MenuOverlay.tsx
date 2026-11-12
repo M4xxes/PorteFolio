@@ -68,7 +68,7 @@ export function MenuOverlay() {
           <Link href="/#top" onClick={go('/#top')} className="text-lg sm:text-[1.375rem]">
             <Wordmark />
           </Link>
-          <button type="button" onClick={close} autoFocus className="ui invert-hover press inline-flex min-h-11 items-center px-3.5">
+          <button type="button" onClick={close} autoFocus aria-label="Fermer le menu" className="ui invert-hover press inline-flex min-h-11 items-center px-3.5">
             &gt; FERMER &lt;
           </button>
         </div>
@@ -89,7 +89,7 @@ export function MenuOverlay() {
                   onClick={go(link.href)}
                   className="group flex items-baseline gap-4 py-3 sm:gap-8 sm:py-4"
                 >
-                  <span className="ui w-8 shrink-0 text-fg-2">[{link.index}]</span>
+                  <span aria-hidden className="ui w-8 shrink-0 text-fg-2">[{link.index}]</span>
                   <span className="pixel nudge text-[clamp(2.75rem,9vw,7.5rem)] text-fg-2 group-hover:text-fg group-focus-visible:text-fg">
                     {link.label}
                   </span>

@@ -1,5 +1,6 @@
 import { site } from '@/lib/constants'
 import { Button, Container, SectionHead } from '@/components/ui/Kit'
+import { Ext } from '@/components/ui/Glyph'
 
 /** À propos, en deux mini-blocs. */
 export function About() {
@@ -26,13 +27,13 @@ export function About() {
         </div>
         <div className="mt-14 flex flex-wrap gap-2">
           <Button href={site.cvUrl} external variant="outline">
-            CV (PDF) ↗
+            CV (PDF)<Ext />
           </Button>
           <Button href={site.github} external variant="text">
-            GitHub ↗
+            GitHub<Ext />
           </Button>
           <Button href={site.linkedin} external variant="text">
-            LinkedIn ↗
+            LinkedIn<Ext />
           </Button>
         </div>
       </Container>

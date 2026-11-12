@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { CONTACT_LIMITS } from '@/lib/contact'
+import { G } from '@/components/ui/Glyph'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
@@ -96,11 +97,11 @@ export function ContactForm() {
         <div role="status" aria-live="polite" className="min-h-5 text-sm">
           {status === 'success' && (
             <span className="ui text-fg">
-              <span className="text-accent">[✓]</span> Message envoyé, merci.
+              <span aria-hidden className="text-accent">[✓]</span> Message envoyé, merci.
             </span>
           )}
           {status === 'error' && (
-            <span className="ui text-[#ff8a7a]">[!] {error}</span>
+            <span className="ui text-[#ff8a7a]"><G>[!]</G> {error}</span>
           )}
         </div>
 
@@ -109,7 +110,7 @@ export function ContactForm() {
           disabled={status === 'loading'}
           className="ui press inline-flex min-h-11 items-center justify-center gap-3 bg-accent px-5 py-4 tracking-[0.1em] text-accent-ink disabled:cursor-wait disabled:opacity-60"
         >
-          {status === 'loading' ? 'ENVOI…' : '[→] ENVOYER LE MESSAGE'}
+          {status === 'loading' ? 'ENVOI…' : <><G>[→]</G> ENVOYER LE MESSAGE</>}
         </button>
       </div>
     </form>
