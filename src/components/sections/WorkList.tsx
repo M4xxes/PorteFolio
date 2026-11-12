@@ -10,7 +10,7 @@ const num = (i: number) => String(i + 1).padStart(2, '0')
  * Liste des projets : la vraie navigation de la sélection (liens accessibles).
  * Le projet actif (celui à l'écran) porte la puce accent ; les autres sont en gris.
  */
-export function WorkList() {
+export function WorkList({ onPick }: { onPick?: (index: number, e: React.MouseEvent) => void }) {
   const active = useUI((s) => s.work.active)
   return (
     <nav aria-label="Projets">
@@ -21,6 +21,7 @@ export function WorkList() {
             <li key={p.id}>
               <Link
                 href={`/projects/${p.id}`}
+                onClick={onPick ? (e) => onPick(i, e) : undefined}
                 aria-current={on ? 'true' : undefined}
                 className={`ui nudge flex min-h-9 items-center gap-2.5 py-1.5 ${on ? 'text-fg' : 'text-fg-3'}`}
               >

@@ -1,12 +1,27 @@
+'use client'
+
 import { ProjectCards } from '@/components/fallback/ProjectCards'
 import { Container, Tag } from '@/components/ui/Kit'
+import { useUI } from '@/lib/store'
 import { WorkCounter, WorkList } from './WorkList'
+import { WorkStage } from './WorkStage'
 
 /**
- * Sélection de projets. À gauche, la liste fixée (vraie navigation) ;
- * à droite, l'emplacement du carrousel 3D (phase 3), occupé par les cartes 2D.
+ * Sélection de projets.
+ * Version complète (3D) : section fixée + carrousel piloté par le scroll (`WorkStage`).
+ * Sinon (rendu serveur, mobile, version légère) : liste fixée à gauche et cartes 2D.
  */
 export function Work() {
+  const full = useUI((s) => s.quality === 'full')
+
+  if (full)
+    return (
+      // scroll-margin nul : l'ancre #work doit s'arrêter pile là où la section se fixe (fin de la transition du hero).
+      <section id="work" aria-labelledby="work-title" style={{ scrollMarginTop: 0 }}>
+        <WorkStage />
+      </section>
+    )
+
   return (
     <section id="work" aria-labelledby="work-title" className="py-28 lg:py-40">
       <Container className="grid gap-x-6 gap-y-14 lg:grid-cols-12">
@@ -24,7 +39,7 @@ export function Work() {
             </div>
           </div>
         </div>
-        <div data-scene="carousel" className="lg:col-span-8">
+        <div className="lg:col-span-8">
           <ProjectCards />
         </div>
       </Container>

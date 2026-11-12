@@ -8,8 +8,8 @@ Mémoire commune entre les modèles. À relire au début de chaque phase, avec l
 | --- | --- | --- |
 | 0 — Cadrage | Opus 5.5 | Terminée |
 | 1 — Fondations de l'interface | Opus 5.5 | **Terminée** (commit `phase-1`) |
-| 2 — Hero 3D | Fable 5.2 | **Terminée** (commit `phase-2`), à montrer à Maxime avant la phase 3 |
-| 3 — Carrousel 3D + shader écran | Fable 5.2 | À faire |
+| 2 — Hero 3D | Fable 5.2 | Terminée (commit `phase-2`) |
+| 3 — Carrousel 3D + shader écran | Fable 5.2 | **Terminée** (commit `phase-3`), à montrer à Maxime avant la phase 4 |
 | 4 — Salle de contrôle + caméra | Fable 5.2 | À faire |
 | 5 — Secours, mobile, a11y | Opus 5.5 | À faire |
 | 6 — Polish | Sonnet 5.5 | À faire |
@@ -42,12 +42,26 @@ Point de départ : commit `dc33fcd` (refonte crème / orange). Elle sera remplac
 - **Écran de démarrage** : 3e ligne « SCÈNE 3D » (OK à la première image dessinée, « NON UTILISÉE » en version légère).
 - **Vérifié** (Chrome, GPU Apple M2, build de production) : 60 images/s pendant le défilement (médiane et p95 à 16,7 ms), aller-retour du scroll (état du titre restauré), navigation vers un projet puis retour (canvas démonté puis remonté), passage sous 1024 px (retour à la sphère SVG), version légère, 0 erreur console. Seul avertissement : `THREE.Clock` déprécié, émis par R3F lui-même.
 
-## Notes pour la phase 3 (Fable 5.2)
+## Phase 3 — ce qui est fait
 
-- La cible de la transition est `[data-scene-target="first-screen"]` (lien-image de la 1re carte, dans `fallback/ProjectCards`). Quand le carrousel existera, pointer la mosaïque vers l'écran actif du cylindre (mêmes `uPlane` + un éventuel `uPlaneRot`) et supprimer le relais `--handoff` en version complète.
-- Ajouter le carrousel comme second enfant du `<Canvas>` de `Stage.tsx` ; étendre la condition de rendu à la demande (aujourd'hui `t < T_END`) à la section fixée.
-- La liste `WorkList` doit rester la navigation ; en version complète, intercepter le clic pour faire défiler jusqu'au projet (`scrollToTarget`).
-- Le shader écran (barillet, lignes, grain, RGB) lit `ui.getState().scroll.velocity` (déjà lissée, en px/frame).
+- **`sections/Work.tsx`** (client) : deux rendus selon `ui.quality`. `full` → `WorkStage` (section fixée) ; sinon (rendu serveur, mobile, version légère) → liste + `fallback/ProjectCards`. `SceneRoot` passe `quality` à `full` dès sa décision (avant le chargement de three) ; une `SceneBoundary` repasse en `lite` si la scène plante.
+- **`sections/WorkStage.tsx`** : bloc `[data-scene="carousel"][data-pinned]` de `100 + 6 × 60` svh, contenu `sticky`. HTML : nom fantôme (Geist Pixel, flou, 5 %), `WorkList`, lien « Ouvrir le projet … » posé sur l'écran actif (`.screen-rect`, `data-cursor="OUVRIR"`, contient la capture HTML tant que la scène n'a pas dessiné), libellé `[03] NOM` (+ « · Visuel » si la couverture est une illustration), `WorkCounter`. Calcule le projet actif depuis le scroll et fait l'aimantation douce (180 ms après l'arrêt, `lenis.scrollTo` 0,55 s, annulable par l'utilisateur).
+- **Liste** : toujours des liens vers `/projects/[slug]`. En version complète, un clic fait défiler jusqu'au projet ; un clic sur le projet déjà actif (ou Cmd/Ctrl-clic) ouvre la page.
+- **`three/heroTimeline.ts`** : mesures communes HTML/3D (n'importe pas three). `metrics.screen` = rectangle de l'écran actif (`screenRect()`, même formule que `.screen-rect` en CSS), `metrics.work` = `{top, range, step, count}`, `workState()` = `{p, offset, onScreen}`, `poke()` pour demander un rendu. `heroT()` vaut 1 quand la section se fixe (`T_END = 1`).
+- **`three/ProjectCarousel.tsx`** : 7 `Mesh` (un `PlaneGeometry` partagé, un `ShaderMaterial` par écran) sur un cylindre (`RADIUS` 1,15 × largeur, pas de 360° / 7), diagonale `DIAGONAL` 0,62 (précédent vers le bas-gauche, suivant depuis le haut-droit), opacité selon le cosinus, inclinaison du groupe vers le curseur (ressort). Textures via l'optimiseur Next (`/_next/image?…&w=1200&q=75`, repli sur le fichier d'origine), libérées au démontage.
+- **Shader écran** : barillet (`k` 0,07 → 0,18 avec la vitesse), coins arrondis, lignes de balayage (1 toutes les 4 px), grain, vignettage, niveaux de gris + assombrissement des voisins (`uActive` lissé), séparation rouge/bleu dans l'image **uniquement en mouvement**, franges accent (gauche) et `#5AC8FA` (droite) sur les bords de l'écran actif, élargies par la vitesse, inclinaison (`uSkew`) liée à la vitesse. À l'arrêt, l'image est nette.
+- **Hero → carrousel** : la mosaïque de particules vise maintenant l'écran actif du carrousel (0,4 → 0,9), puis s'efface (0,92 → 1) pendant que le carrousel apparaît (0,9 → 1). Le relais `--handoff` de la phase 2 est supprimé.
+- **Rendu à la demande** (`three/Stage.tsx`) : hero tant que `t < 1` ; carrousel seulement s'il y a eu du scroll ou un mouvement de curseur depuis moins de 1,5 s ; mesuré : 0 appel de dessin par seconde au repos.
+- **Vérifié** (Chrome, GPU Apple M2, build de production, 1440 × 900 et 1024 × 768) : passage hero → carrousel, rotation au scroll, aimantation (arrêt entre 2 projets → cran entier), clic sur la liste, lien d'ouverture (URL et focus clavier), bouton « Voir les projets » (arrive pile sur le projet 01), sortie vers la méthode, bascule version légère ↔ complète, reduced motion (cartes 2D), 60 images/s en défilement, 0 erreur console.
+
+## Notes pour la phase 4 (Fable 5.2)
+
+- Le lien `.screen-rect` de `WorkStage` est le point d'entrée de la salle : intercepter le clic (version complète), `ui.setState({ work: { active, mode: 'room' } })`, `history.pushState` vers `/projects/[slug]`.
+- `SceneRoot` ne monte la scène que sur `/` : pour le chargement direct de `/projects/[slug]` en version complète, élargir la condition et prévoir l'arrivée directe dans la salle (sans animation d'entrée).
+- La caméra est fixe (`FOV 30`, `z = 10`, calée sur le DOM par `metrics.wpp`). Pour la salle : animer la caméra (0,8–1,2 s, ease-in-out, interruptible) et étendre le rendu à la demande de `Stage.tsx` aux transitions et au parallax.
+- Bloquer le scroll pendant la salle (`lockScroll(true)`), et restaurer la position du carrousel à la sortie (`metrics.work.top + active * step`).
+- Le cylindre boucle : au projet 01, le voisin de gauche est le 07 (cohérent avec « ← 07 MAP » dans la salle).
+- Captures disponibles pour les 3 écrans muraux : voir le tableau « Captures » plus bas (plusieurs projets n'en ont qu'une).
 
 ## Direction (5 lignes)
 
@@ -123,4 +137,5 @@ Voir le message de fin de phase 0. Intégration en phase 1 une fois validées.
 - **Sécurité** : `next@16.4.0` est touché par des vulnérabilités critiques (GHSA-2464-fhr4-w9xw, GHSA-p3m5-59mp-jv5r, GHSA-673q-mjm6-r5xr). Correctif : `next@16.4.6` (+ `eslint-config-next@16.4.6`). Le build s'arrête une fois sur un avertissement, puis passe à la relance. Mise à jour en attente de l'accord de Maxime.
 - Choix par défaut appliqués faute de réponse : Evastre sans espace admin (repo `Evasive`), « six malaxeurs » conservé, Map sans année.
 - Formulaire de contact masqué tant que `RESEND_API_KEY` n'est pas configurée (l'e-mail direct reste proposé).
+- Passage cartes → section fixée : la hauteur de la page change quand `quality` devient `full` (sous l'écran de démarrage à la première visite). À revoir en phase 5 si un décalage est visible au retour arrière.
 - Lighthouse ≥ 90 sur mobile vaut pour la version légère. En version complète, l'objectif est 60 fps sur un portable récent.

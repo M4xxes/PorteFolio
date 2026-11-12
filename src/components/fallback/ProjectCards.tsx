@@ -36,10 +36,9 @@ export function ProjectCards() {
             <Link
               href={`/projects/${p.id}`}
               data-cursor="OUVRIR"
-              data-scene-target={i === 0 ? 'first-screen' : undefined}
               tabIndex={-1}
               aria-hidden
-              className="screen-card group relative block overflow-hidden bg-surface"
+              className="group relative block overflow-hidden bg-surface"
             >
               <Image
                 src={p.cover.src}

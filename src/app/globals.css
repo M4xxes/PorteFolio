@@ -370,10 +370,16 @@ section[id] {
 html[data-scene='on'] [data-scene='hero'] > svg {
   visibility: hidden;
 }
-/* Passage de relais mosaïque 3D → capture HTML : --handoff va de 0 à 1 avec le scroll. */
-html[data-scene='on'] [data-scene-target] {
-  background: transparent;
+/* Écran actif du carrousel : même rectangle que `screenRect()` côté 3D. */
+.screen-rect {
+  position: absolute;
+  left: 58%;
+  top: 50%;
+  width: min(42vw, 99.2vh);
+  aspect-ratio: 16 / 10;
+  translate: -50% -50%;
 }
-html[data-scene='on'] [data-scene-target] > * {
-  opacity: var(--handoff, 1);
+/* La capture HTML du projet actif s'efface quand l'écran 3D est là. */
+html[data-scene='on'] .screen-fallback {
+  opacity: 0;
 }

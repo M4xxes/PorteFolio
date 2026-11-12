@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { Component, useEffect, useState, type ReactNode } from 'react'
 import { reducedMotionQuery } from '@/lib/motion'
 import { ui, useUI } from '@/lib/store'
 
@@ -15,6 +15,22 @@ function webglAvailable() {
     return Boolean(c.getContext('webgl2') || c.getContext('webgl'))
   } catch {
     return false
+  }
+}
+
+/** Si la scène plante (contexte WebGL perdu, shader refusé…), on repasse en version légère sans casser la page. */
+class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+  componentDidCatch(error: unknown) {
+    console.error('Scène 3D désactivée :', error)
+    document.documentElement.removeAttribute('data-scene')
+    ui.setState({ scene: 'off', quality: 'lite' })
+  }
+  render() {
+    return this.state.failed ? null : this.props.children
   }
 }
 
@@ -40,7 +56,9 @@ export function SceneRoot() {
         ui.setState({ scene: 'off', quality: 'lite' })
         return
       }
-      ui.setState({ scene: 'loading' })
+      // `quality: 'full'` dès la décision : la mise en page fixée du carrousel s'installe tout de suite,
+      // avec la capture HTML du projet actif en attendant que la scène dessine.
+      ui.setState({ scene: 'loading', quality: 'full' })
       // Après le premier rendu : le texte s'affiche avant que la 3D ne soit téléchargée.
       idle = window.setTimeout(() => setMount(true), 60)
     }
@@ -54,5 +72,9 @@ export function SceneRoot() {
     }
   }, [pathname, liteForced])
 
-  return mount ? <Stage /> : null
+  return mount ? (
+    <SceneBoundary>
+      <Stage />
+    </SceneBoundary>
+  ) : null
 }

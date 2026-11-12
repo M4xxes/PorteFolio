@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { ui } from '@/lib/store'
-import { T_END, clamp01, heroT, metrics, smooth } from './heroTimeline'
+import { clamp01, heroT, metrics, poke, smooth } from './heroTimeline'
 
 // 56 × 35 = 1 960 points : une sphère au repos, une mosaïque 16:10 à l'arrivée.
 const COLS = 56
@@ -169,6 +169,7 @@ export function HeroParticles({ texture, onFirstFrame }: { texture: string; onFi
       if (!u) return t.dispose()
       u.uTex.value = t
       u.uTexReady.value = 1
+      poke()
     })
     return () => {
       disposed = true
@@ -214,11 +215,13 @@ export function HeroParticles({ texture, onFirstFrame }: { texture: string; onFi
 
     // La sphère reste presque en place pendant que la page défile (léger parallax), puis se disperse.
     u.uSphere.value.set(toX(metrics.sphere.x), toY(metrics.sphere.y - scroll.y * 0.3), metrics.sphere.r * wpp)
-    const tg = metrics.target
-    u.uPlane.value.set(toX(tg.x + tg.w / 2), toY(tg.y - scroll.y + tg.h / 2), tg.w * wpp, tg.h * wpp)
+    // La grille vise l'écran actif du carrousel, là où il se trouve à l'écran pendant que la section arrive.
+    const sc = metrics.screen
+    u.uPlane.value.set(toX(sc.cx), toY(metrics.work.top - scroll.y + sc.cy), sc.w * wpp, sc.h * wpp)
     u.uDisperse.value = smooth(0, 0.5, t)
-    u.uForm.value = clamp01((t - 0.4) / 0.6)
-    u.uFade.value = s.intro * (1 - clamp01((t - 1) / (T_END - 1)))
+    u.uForm.value = clamp01((t - 0.4) / 0.5)
+    u.uFade.value = s.intro * (1 - smooth(0.92, 1, t))
+    mesh.current!.visible = t < 1
     u.uWpp.value = wpp
     u.uTime.value = time
     u.uVel.value = scroll.velocity
