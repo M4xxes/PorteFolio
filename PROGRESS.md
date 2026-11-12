@@ -74,7 +74,7 @@ Point de départ : commit `dc33fcd` (refonte crème / orange). Elle sera remplac
 
 - **`lib/quality.ts`** : toutes les règles version complète / légère.
   - Raisons dures (non contournables) : page sans scène (`route`), écran < 1024 px (`small`), `prefers-reduced-motion` (`motion`), pas de WebGL (`webgl`).
-  - Raisons souples : GPU faible (`gpu`, detect-gpu tier < 2 ou GPU sur liste noire), < 30 images/s pendant 2 s de rendu continu (`fps`), scène en erreur ou contexte WebGL perdu (`error`). Verdict mémorisé pour la session (`sessionStorage portfolio:perf`).
+  - Raisons souples : GPU faible (`gpu`, detect-gpu tier < 2 ou GPU sur liste noire), < 30 images/s pendant 4 s de rendu continu (`fps`), scène en erreur ou contexte WebGL perdu (`error`). Verdict mémorisé pour la session (`sessionStorage portfolio:perf`).
   - Choix du visiteur (`localStorage portfolio:lite`) : `1` = forcée, `0` = désactivée (ignore les raisons souples et efface le verdict), absent = auto.
 - **detect-gpu** chargé à la demande, seulement quand la 3D est envisageable ; données de référence **auto-hébergées** dans `public/detect-gpu/` (aucune requête vers unpkg). À recopier si la version de detect-gpu change (voir README). Délai max 2,5 s ; en cas de doute, la surveillance des images/s prend le relais.
 - **Store** : `liteForced` remplacé par `liteMode` (`auto` / `on` / `off`), `liteReason`, `perf`.
@@ -132,6 +132,13 @@ Objectif « Lighthouse ≥ 90 mobile » : **atteint**. Objectif « LCP < 2,5 s �
 - Aperçu de la vidéo Evastre (151 Ko) demandé seulement à l'approche de l'écran.
 
 **Non vérifié** : Safari, Firefox, vrai appareil mobile ou lent ; envoi réel d'un e-mail via Resend ; rendu sonore (le code est testé, pas l'écoute) ; Lighthouse en profil mobile *avec* 3D (la 3D est coupée sous 1024 px par conception).
+
+## Après la phase 7
+
+- **CV remplacé** : `public/assets/cv-maxime-pero.pdf` = `~/Downloads/CV_Maxime_Pero.pdf` (identique octet pour octet, 1 page) ; `public/assets/cv-preview.webp` régénéré depuis ce PDF. L'ancien CV reste dans l'historique git (`f6741f0` et avant). Servi en 200 `application/pdf`.
+- **Vulnérabilités : `npm audit` = 0** (dev comprises). `next` 16.4.0 → **16.4.6** et `eslint-config-next` 16.4.6 (épinglés, sans `--force`) : corrige 2 failles d'exécution de code à distance et 1 déni de service ; `zod` mis à jour (`npm audit fix`) ; `minimatch` ≥ 11 imposé au seul `@typescript-eslint/typescript-estree` via `overrides` dans `package.json` (typescript-eslint 8.72.2, dernière version, fige minimatch 10 vulnérable). Lint, typecheck, build et les 41 vérifications navigateur passent. Le build ne s'arrête plus sur l'avertissement de sécurité.
+- **Surveillance des images/s** : bascule en version légère seulement après **2 fenêtres lentes consécutives** (4 s) au lieu d'une seule. Constaté pendant ces vérifications : sous forte charge machine (charge 14–26, synchronisation iCloud du dossier `Documents` après `npm install` / build), une fenêtre de 2 s suffisait à passer en version légère. Le projet vit dans un dossier synchronisé par iCloud : le déplacer hors d'iCloud évite ce bruit.
+- **Incohérences entre le CV fourni et le site** (non modifiées, à trancher) : le CV dit « Recherche un CDI », le site dit « alternance & freelance » ; le CV indique la 3ᵉ année validée (soutenance à venir), le site « Bachelor depuis 2023 » ; e-mail `maxime.pero@ynov.com` (CV) vs `maximepero12@gmail.com` (site) ; portfolio `maxportefolio.netlify.app` (CV) vs `m4xdev.netlify.app` (brief). Le CV contient l'adresse postale et le téléphone : il est téléchargeable publiquement depuis le site.
 
 ## Direction (5 lignes)
 
@@ -204,7 +211,7 @@ Voir le message de fin de phase 0. Intégration en phase 1 une fois validées.
 - Malaxeurs : le texte dit « six malaxeurs », les captures en montrent B1 à B7.
 - Map : pas de dépôt public, pas d'année. Année à confirmer.
 - Skills `design-taste-frontend`, `/impeccable`, `find-animation-opportunities`, `emil-design-eng`, `animation-vocabulary` non installés : travail fait à la main. `PRODUCT.md` non créé.
-- **Sécurité** : `next@16.4.0` est touché par des vulnérabilités critiques (GHSA-2464-fhr4-w9xw, GHSA-p3m5-59mp-jv5r, GHSA-673q-mjm6-r5xr). Correctif : `next@16.4.6` (+ `eslint-config-next@16.4.6`). Le build s'arrête une fois sur un avertissement, puis passe à la relance. Mise à jour en attente de l'accord de Maxime.
+- **Sécurité** : corrigée après la phase 7 (voir « Après la phase 7 »).
 - Choix par défaut appliqués faute de réponse : Evastre sans espace admin (repo `Evasive`), « six malaxeurs » conservé, Map sans année.
 - Formulaire de contact masqué tant que `RESEND_API_KEY` n'est pas configurée (l'e-mail direct reste proposé).
 - Passage cartes → section fixée : la hauteur de la page change quand `quality` devient `full` (sous l'écran de démarrage à la première visite, sous le hero ensuite : pas de saut visible constaté).

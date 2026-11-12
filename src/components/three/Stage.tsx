@@ -17,6 +17,8 @@ const IDLE_MS = 1500
 /** Surveillance des performances : ignorée au démarrage (compilation des shaders, envoi des textures). */
 const WATCH_AFTER_MS = 1500
 const WATCH_WINDOW_MS = 2000
+/** Fenêtres lentes consécutives avant de basculer : un à-coup ponctuel (chargement, autre onglet) ne suffit pas. */
+const SLOW_WINDOWS = 2
 const MIN_FPS = 30
 
 function markDrawn() {
@@ -54,6 +56,7 @@ export default function Stage() {
     let renderedLast = false
     let windowMs = 0
     let windowFrames = 0
+    let slowWindows = 0
     const render = (time: number, delta: number) => {
       advance(time / 1000)
       if (watch && renderedLast && time - mountedAt > WATCH_AFTER_MS) {
@@ -63,8 +66,9 @@ export default function Stage() {
           const fps = (windowFrames * 1000) / windowMs
           windowMs = 0
           windowFrames = 0
-          // Trop lent : version légère pour le reste de la session (le visiteur peut la désactiver).
-          if (fps < MIN_FPS) reportPerf('fps')
+          // Trop lent, sur plusieurs fenêtres de suite : version légère pour le reste de la session (le visiteur peut la désactiver).
+          slowWindows = fps < MIN_FPS ? slowWindows + 1 : 0
+          if (slowWindows >= SLOW_WINDOWS) reportPerf('fps')
         }
       }
       renderedLast = true
