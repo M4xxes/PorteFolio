@@ -12,8 +12,8 @@ Mémoire commune entre les modèles. À relire au début de chaque phase, avec l
 | 3 — Carrousel 3D + shader écran | Fable 5.2 | Terminée (commit `phase-3`) |
 | 4 — Salle de contrôle + caméra | Fable 5.2 | Terminée (commit `phase-4`) |
 | 5 — Secours, mobile, a11y | Opus 5.5 | Terminée (commit `phase-5`) |
-| 6 — Polish | Sonnet 5.5 | **Terminée** (commit `phase-6`) |
-| 7 — Vérification | Sonnet 5.5 | À faire |
+| 6 — Polish | Sonnet 5.5 | Terminée (commit `phase-6`) |
+| 7 — Vérification | Sonnet 5.5 | **Terminée** (commit `phase-7`) |
 
 Point de départ : commit `dc33fcd` (refonte crème / orange). Elle sera remplacée par l'identité arcade.
 
@@ -98,12 +98,40 @@ Les skills `emil-design-eng`, `animation-vocabulary`, `/impeccable` ne sont pas 
 - **Textes** : « À propos » rendu factuel (retrait d'une préférence non vérifiable, ajout des vrais projets cités et de la mention de ce qui revient à d'autres), étape « Livrer et suivre » rendue concrète (Netlify, documentation dans le dépôt). Les phrases-histoires de la phase 0 sont inchangées.
 - **Vérifié** (Chrome, build de production) : son OFF = 0 oscillateur / 0 contexte, activation, persistance, easter egg sonore, nom accessible de la sélection, survol des cartes, régressions (salle, carrousel, ancres, 375 px, reduced motion) sans erreur console.
 
-## Notes pour la phase 7 (Sonnet 5.5)
+## Phase 7 — vérification (faite avec `playwright-core` + Chrome système, Lighthouse 12.8 ; Playwright MCP non disponible)
 
-- Playwright MCP non disponible ici : les vérifications se font avec `playwright-core` + Chrome système (scripts dans le scratchpad de la session, non versionnés).
-- Lighthouse mobile : à lancer sur la version légère (mobile émulé) ; cible ≥ 90, LCP < 2,5 s.
-- Formulaire de contact : testable seulement avec `RESEND_API_KEY` ; sans, il n'est pas rendu (comportement voulu).
-- À revérifier : version sans WebGL (désactiver WebGL au lancement de Chrome), 375 px, reduced motion, URL directe `/projects/[slug]`.
+**Parcours navigateur : 41/41** sur le build de production (script de la session, non versionné) :
+- Démarrage : compteur 000 → 100 sur de vraies étapes, fermé ≈ 1,5 s, une fois par session, Entrée l'enchaîne.
+- Menu : atteignable au clavier, s'ouvre à Entrée, focus piégé (aucun élément de la page atteignable), scroll bloqué puis rétabli, Échap rend le focus au bouton.
+- Défilement hero → contact à la molette : bas de page atteint, 100 %, toutes les sections présentes.
+- Carrousel : « Voir les projets » arrive pile sur la section fixée, aimantation, clic sur la liste.
+- Salle : clic, ← →, Échap, FERMER, retour arrière du navigateur, miniatures, retour sur le bon projet du carrousel.
+- URL directe `/projects/[slug]` (200, salle ouverte sans animation, titre d'onglet, Échap → carrousel), URL inconnue (404).
+- Sans WebGL (Chrome lancé sans 3D) : pas de canvas, 7 cartes 2D, raison affichée, page projet classique.
+- 375 px : aucun débordement (accueil, 3 pages projet), menu au toucher. Reduced motion : ni démarrage, ni curseur, ni 3D, ni Lenis, contenu visible. Sans JavaScript : contenu complet.
+
+**Formulaire : 14/14**, sans envoi réel : build avec une fausse clé `RESEND_API_KEY` (jamais committée), requête du navigateur interceptée (aucun appel à Resend). Validation à vide, saisie au clavier, focus visible, succès + champs vidés, erreur sans perte de saisie ; côté serveur : champ piège (succès silencieux sans envoi), e-mail invalide, champ vide, message trop long, corps invalide. La build normale (sans clé) ne rend pas le formulaire.
+
+**Lighthouse** (accessibilité, bonnes pratiques, SEO : 100 partout) :
+
+| Page | Profil | Performance | LCP simulé | TBT | CLS |
+| --- | --- | --- | --- | --- | --- |
+| `/` | mobile (version légère) | 96 | 2,8 s | 60 ms | 0 |
+| `/projects/evastre` | mobile | 96 | 2,8 s | 10 ms | 0 |
+| `/projects/mixer-hmi` | mobile | 96 | 2,8 s | 30 ms | 0 |
+| `/projects/animarah` | mobile | 97 | 2,6 s | 10 ms | 0 |
+| `/` | bureau (version complète 3D) | 99 | 0,5 s | 100 ms | 0 |
+| `/projects/animarah` | bureau (salle 3D) | 99 | 0,6 s | 90 ms | 0 |
+
+Objectif « Lighthouse ≥ 90 mobile » : **atteint**. Objectif « LCP < 2,5 s » : **non atteint en simulation mobile** (2,6–2,8 s, mesure Lighthouse avec 4G lente et CPU ralenti ×4) ; le LCP réellement observé en local est de 0,1–0,15 s. L'élément LCP est un paragraphe de texte : le texte s'affiche avant la 3D, comme demandé.
+
+**Corrections faites pendant la vérification** (avant : perf 89 / 86 / 91, LCP 3,6–4,2 s) :
+- `geist/font/pixel` déclarait et préchargeait les 5 variantes de Geist Pixel (130 Ko) → import ciblé `geist/font/pixel/square` : 3 polices préchargées au lieu de 7.
+- Images des cartes sous le hero en `fetchPriority="low"`.
+- `framer-motion` (42 Ko gzippés pour 3 usages) retiré : ressort des boutons magnétiques réécrit sur la boucle d'animation commune, cascade du menu en CSS, `MotionConfig` supprimé. Paquet désinstallé. Mesuré : décalage ≤ 6 px, retour à 0, cascade rejouée à chaque ouverture.
+- Aperçu de la vidéo Evastre (151 Ko) demandé seulement à l'approche de l'écran.
+
+**Non vérifié** : Safari, Firefox, vrai appareil mobile ou lent ; envoi réel d'un e-mail via Resend ; rendu sonore (le code est testé, pas l'écoute) ; Lighthouse en profil mobile *avec* 3D (la 3D est coupée sous 1024 px par conception).
 
 ## Direction (5 lignes)
 
@@ -180,4 +208,5 @@ Voir le message de fin de phase 0. Intégration en phase 1 une fois validées.
 - Choix par défaut appliqués faute de réponse : Evastre sans espace admin (repo `Evasive`), « six malaxeurs » conservé, Map sans année.
 - Formulaire de contact masqué tant que `RESEND_API_KEY` n'est pas configurée (l'e-mail direct reste proposé).
 - Passage cartes → section fixée : la hauteur de la page change quand `quality` devient `full` (sous l'écran de démarrage à la première visite, sous le hero ensuite : pas de saut visible constaté).
-- Lighthouse ≥ 90 sur mobile vaut pour la version légère. En version complète, l'objectif est 60 fps sur un portable récent.
+- Lighthouse : voir « Phase 7 ». En version complète, 60 images/s mesurées sur un Apple M2, pas sur un portable plus modeste.
+- `lucide-react` n'est plus utilisé nulle part (aucun impact sur le bundle) : peut être désinstallé.

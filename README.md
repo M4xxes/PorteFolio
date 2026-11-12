@@ -1,6 +1,6 @@
 # Portfolio — Maxime Pero
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Framer Motion et Lenis.
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Lenis, three / React Three Fiber (3D).
 
 ## Identité
 

@@ -63,7 +63,9 @@ export function ProjectCards() {
                 alt=""
                 width={p.cover.width}
                 height={p.cover.height}
-                sizes="(min-width: 1024px) 60vw, 100vw"
+                sizes="(min-width: 1024px) 60vw, (min-width: 768px) 100vw, 86vw"
+                // Sous le hero : ne concurrence ni le texte ni les polices au chargement.
+                fetchPriority="low"
                 className="aspect-[16/10] w-full object-cover object-left-top"
               />
               {/* Désaturation par un calque (mix-blend) : au survol, seule l'opacité change. */}

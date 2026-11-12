@@ -15,6 +15,24 @@ export function ProjectVideo({ video, label, url }: { video: Video; label: strin
   const reduced = usePrefersReducedMotion()
   const [playing, setPlaying] = useState(false)
   const [userPaused, setUserPaused] = useState(false)
+  // L'aperçu (150 Ko) n'est demandé qu'à l'approche de l'écran : il ne concurrence pas le texte au chargement.
+  const [near, setNear] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNear(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '300px 0px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   useEffect(() => {
     const el = ref.current
@@ -55,7 +73,7 @@ export function ProjectVideo({ video, label, url }: { video: Video; label: strin
         <video
           ref={ref}
           className="absolute inset-0 h-full w-full object-cover"
-          poster={video.poster}
+          poster={near ? video.poster : undefined}
           muted
           loop
           playsInline

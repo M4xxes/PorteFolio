@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import { MotionConfig } from 'framer-motion'
 import Lenis from 'lenis'
 import { addFrame } from '@/lib/loop'
 import { ui } from '@/lib/store'
@@ -81,6 +80,5 @@ export function ScrollEngine({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  // reducedMotion="user" : Framer Motion coupe les animations de transformation si l'utilisateur le demande.
-  return <MotionConfig reducedMotion="user">{children}</MotionConfig>
+  return <>{children}</>
 }

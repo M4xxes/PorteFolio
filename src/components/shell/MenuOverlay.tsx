@@ -3,9 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
 import { navLinks, site } from '@/lib/constants'
-import { EASE_OUT } from '@/lib/motion'
 import { ui, useUI } from '@/lib/store'
 import { lockScroll, scrollToTarget } from './ScrollEngine'
 import { DecodeText } from './DecodeText'
@@ -80,13 +78,8 @@ export function MenuOverlay() {
         <nav aria-label="Navigation principale" className="flex flex-1 flex-col justify-center py-10">
           <ol className="flex flex-col">
             {navLinks.map((link, i) => (
-              <motion.li
-                key={link.href}
-                initial={false}
-                animate={open ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-                transition={{ duration: 0.26, ease: EASE_OUT, delay: open ? 0.05 + i * 0.04 : 0 }}
-                className="border-b border-line"
-              >
+              // Cascade (CSS) : le <dialog> fermé est en display:none, l'animation repart donc à chaque ouverture.
+              <li key={link.href} className="menu-item border-b border-line" style={{ '--i': i } as React.CSSProperties}>
                 <Link
                   href={link.href}
                   onClick={go(link.href)}
@@ -97,7 +90,7 @@ export function MenuOverlay() {
                     {link.label}
                   </span>
                 </Link>
-              </motion.li>
+              </li>
             ))}
           </ol>
         </nav>

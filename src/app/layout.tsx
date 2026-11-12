@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Doto } from 'next/font/google'
 import localFont from 'next/font/local'
-import { GeistPixelSquare } from 'geist/font/pixel'
+// Import ciblé : `geist/font/pixel` déclarerait (et préchargerait) les 5 variantes de la police.
+import { GeistPixelSquare } from 'geist/font/pixel/square'
 import './globals.css'
 import { ScrollEngine } from '@/components/shell/ScrollEngine'
 import { Header } from '@/components/shell/Header'

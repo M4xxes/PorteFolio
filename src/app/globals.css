@@ -245,6 +245,11 @@ html[data-boot='on'] {
 .menu-dialog[data-closing='true'] {
   animation: menu-out 180ms var(--ease-out) both;
 }
+/* Liens du menu : montée en cascade (40 ms), seulement transform / opacity. */
+.menu-item {
+  animation: rise 260ms var(--ease-out) both;
+  animation-delay: calc(50ms + var(--i, 0) * 40ms);
+}
 @keyframes menu-in {
   from {
     opacity: 0;
