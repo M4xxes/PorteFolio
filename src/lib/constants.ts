@@ -9,7 +9,7 @@ export const site = {
   cvPreviewUrl: '/assets/cv-preview.webp',
   photoUrl: '/assets/profile.jpg',
   location: 'Lyon, France',
-  availability: 'Ouvert à l’alternance et aux projets freelance',
+  availability: 'Ouvert au CDI et aux missions freelance',
   description:
     'Portfolio de Maxime Pero, développeur full-stack à Lyon : sites et applications web en React, TypeScript et Node.js, du site vitrine à l’écran de supervision industrielle.',
   // Netlify expose l'URL de production dans `URL` au moment du build.

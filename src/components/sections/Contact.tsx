@@ -13,7 +13,7 @@ export function Contact() {
         <div className="border-t border-line pt-3">
           <Tag index="05">Contact</Tag>
           <h2 id="contact-title" className="pixel mt-12 text-[clamp(2.75rem,8.5vw,8.5rem)]">
-            Une alternance,
+            Un poste en CDI,
             <br />
             un projet ?
           </h2>

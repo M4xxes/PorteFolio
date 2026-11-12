@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   applicationName: `${site.name} — Portfolio`,
   authors: [{ name: site.name, url: site.github }],
   creator: site.name,
-  keywords: ['Maxime Pero', 'développeur full-stack', 'creative developer', 'Lyon', 'React', 'TypeScript', 'Node.js', 'portfolio', 'alternance'],
+  keywords: ['Maxime Pero', 'développeur full-stack', 'creative developer', 'Lyon', 'React', 'TypeScript', 'Node.js', 'portfolio', 'freelance', 'CDI'],
   alternates: { canonical: '/' },
   openGraph: {
     type: 'website',

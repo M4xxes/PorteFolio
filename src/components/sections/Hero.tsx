@@ -19,7 +19,7 @@ export function Hero() {
         </p>
         <p className="flex items-center gap-2">
           <span aria-hidden className="size-[7px] bg-accent" />
-          DISPONIBLE — ALTERNANCE &amp; FREELANCE
+          DISPONIBLE — CDI &amp; FREELANCE
         </p>
       </div>
 

@@ -20,7 +20,7 @@ export function About() {
           <div className="border-t border-line pt-4 lg:col-span-5 lg:col-start-7">
             <h3 className="ui text-fg-2">Avec qui je travaille</h3>
             <p className="mt-6 text-base">
-              Je cherche une alternance dans une équipe produit ou un studio web. Je prends aussi des projets freelance
+              Je cherche un CDI dans une équipe produit ou un studio web. Je prends aussi des missions freelance
               pour des TPE : site vitrine, refonte d’un site existant, petit outil métier. Chaque projet ci-dessus indique
               ce que j’y ai fait, et ce qui revient à quelqu’un d’autre.
             </p>

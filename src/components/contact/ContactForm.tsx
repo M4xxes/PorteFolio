@@ -83,7 +83,7 @@ export function ContactForm() {
           minLength={10}
           maxLength={CONTACT_LIMITS.message}
           className={`${fieldClass} resize-y`}
-          placeholder="L’alternance proposée, votre projet, vos délais…"
+          placeholder="Le poste proposé, votre mission, vos délais…"
         />
       </div>
 
