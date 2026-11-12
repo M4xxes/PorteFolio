@@ -60,7 +60,7 @@ html {
 }
 
 body {
-  background: var(--bg);
+  /* Pas de fond ici : il est sur <html>, pour que le canvas 3D (z-index négatif) reste visible derrière le contenu. */
   color: var(--fg);
   font-family: var(--font-mono);
   font-size: var(--text-read);
@@ -361,4 +361,19 @@ html[data-boot='on'] {
 /* Ancres : les sections s'arrêtent sous l'en-tête fixe (défilement natif, sans Lenis). */
 section[id] {
   scroll-margin-top: var(--header-h);
+}
+
+/* ============================================================
+   Scène 3D (phase 2)
+   data-scene="on" est posé quand le canvas a dessiné sa première image.
+   ============================================================ */
+html[data-scene='on'] [data-scene='hero'] > svg {
+  visibility: hidden;
+}
+/* Passage de relais mosaïque 3D → capture HTML : --handoff va de 0 à 1 avec le scroll. */
+html[data-scene='on'] [data-scene-target] {
+  background: transparent;
+}
+html[data-scene='on'] [data-scene-target] > * {
+  opacity: var(--handoff, 1);
 }

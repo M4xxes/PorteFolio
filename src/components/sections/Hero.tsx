@@ -32,7 +32,7 @@ export function Hero() {
           <DotSphere className="w-full" />
         </div>
 
-        <div className="relative col-span-12 flex flex-col justify-center gap-10 py-16 lg:col-span-8 lg:col-start-1 lg:row-start-1">
+        <div data-hero-text className="relative col-span-12 flex flex-col justify-center gap-10 py-16 will-change-transform lg:col-span-8 lg:col-start-1 lg:row-start-1">
           <h1 id="hero-title" className="pixel text-[clamp(2.3rem,9.4vw,8.5rem)] lg:text-[clamp(3rem,7vw,8.5rem)]">
             <span className="block">Des interfaces</span>
             <span className="block pl-[1.6em]">soignées,</span>

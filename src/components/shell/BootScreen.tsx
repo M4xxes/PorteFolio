@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { projects } from '@/lib/data/projects'
 import { BOOT_STORAGE_KEY } from '@/lib/motion'
+import { ui } from '@/lib/store'
 
 const MAX_MS = 1500
 const BLOCKS = 20
@@ -13,12 +14,12 @@ declare global {
   }
 }
 
-type Task = { label: string; done: number; total: number }
+type Task = { label: string; done: number; total: number; note?: string }
 
 /**
  * Écran de démarrage (≤ 1,5 s, une fois par session).
- * Le compteur suit de vraies étapes : polices chargées, captures des projets téléchargées.
- * La scène 3D s'y ajoutera en phase 2. Clic, Entrée ou défilement : on entre tout de suite.
+ * Le compteur suit de vraies étapes : polices chargées, captures des projets téléchargées,
+ * scène 3D prête (première image dessinée). Clic, Entrée ou défilement : on entre tout de suite.
  */
 export function BootScreen() {
   const [on, setOn] = useState(false)
@@ -26,6 +27,7 @@ export function BootScreen() {
   const [tasks, setTasks] = useState<Task[]>([
     { label: 'INTERFACE', done: 0, total: 1 },
     { label: `${String(projects.length).padStart(3, '0')} PROJETS`, done: 0, total: projects.length },
+    { label: 'SCÈNE 3D', done: 0, total: 1 },
   ])
   const [shown, setShown] = useState(0)
   const left = useRef(false)
@@ -49,6 +51,15 @@ export function BootScreen() {
       img.src = p.cover.src
     }
 
+    // Scène 3D : prête quand le canvas a dessiné sa première image ; « NON UTILISÉE » en version légère.
+    const sceneState = () => {
+      const scene = ui.getState().scene
+      if (scene === 'ready' || scene === 'off')
+        setTasks((t) => t.map((task, k) => (k === 2 ? { ...task, done: 1, note: scene === 'off' ? 'NON UTILISÉE' : undefined } : task)))
+    }
+    sceneState()
+    const unsubscribe = ui.subscribe(sceneState)
+
     const leave = () => {
       if (left.current) return
       left.current = true
@@ -71,6 +82,7 @@ export function BootScreen() {
     window.addEventListener('touchmove', leave, { passive: true })
     window.addEventListener('pointerdown', leave)
     return () => {
+      unsubscribe()
       clearTimeout(timer)
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('wheel', leave)
@@ -130,7 +142,7 @@ export function BootScreen() {
             <li key={t.label}>
               &gt; {t.label.padEnd(14, '.')}{' '}
               <span className="text-fg">
-                {t.done >= t.total ? 'OK' : t.total > 1 ? `${String(t.done).padStart(2, '0')}/${String(t.total).padStart(2, '0')}` : 'EN COURS'}
+                {t.done >= t.total ? (t.note ?? 'OK') : t.total > 1 ? `${String(t.done).padStart(2, '0')}/${String(t.total).padStart(2, '0')}` : 'EN COURS'}
               </span>
             </li>
           ))}

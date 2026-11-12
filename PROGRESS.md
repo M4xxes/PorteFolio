@@ -8,7 +8,7 @@ Mémoire commune entre les modèles. À relire au début de chaque phase, avec l
 | --- | --- | --- |
 | 0 — Cadrage | Opus 5.5 | Terminée |
 | 1 — Fondations de l'interface | Opus 5.5 | **Terminée** (commit `phase-1`) |
-| 2 — Hero 3D | Fable 5.2 | À faire |
+| 2 — Hero 3D | Fable 5.2 | **Terminée** (commit `phase-2`), à montrer à Maxime avant la phase 3 |
 | 3 — Carrousel 3D + shader écran | Fable 5.2 | À faire |
 | 4 — Salle de contrôle + caméra | Fable 5.2 | À faire |
 | 5 — Secours, mobile, a11y | Opus 5.5 | À faire |
@@ -31,12 +31,23 @@ Point de départ : commit `dc33fcd` (refonte crème / orange). Elle sera remplac
 - **Icônes** : favicon « M » pixel + point accent, image Open Graph sombre.
 - **Vérifié** (Playwright + Chrome, build de production) : démarrage (compteur 000 → 100 sur de vraies étapes, sortie ≤ 1,5 s, `#site` inerte pendant), menu (ouverture, focus sur FERMER, Échap, lien vers ancre), ancres sous l'en-tête, méthode fixée, easter egg, redirections, 375 px sans débordement, reduced motion (pas de boot ni de curseur), sans JS (pas de boot), 0 erreur console.
 
-## Notes pour la phase 2 (Fable 5.2)
+## Phase 2 — ce qui est fait
 
-- Brancher la scène sur `addFrame(..., 20)` ; lire `ui.getState().scroll` / `.pointer` dans la frame, ne pas créer de seconde boucle.
-- Ajouter une tâche « SCÈNE 3D » à `BootScreen` (tableau `tasks`) quand le chunk et les textures du hero sont prêts ; la sortie reste plafonnée à 1,5 s.
-- Masquer `DotSphere` quand la scène est montée et `quality === 'full'` (elle reste le secours).
-- Le hero HTML garde le titre à gauche (`lg:col-span-8`) ; la scène occupe `lg:col-span-5 lg:col-start-8`.
+- **Dépendances** : `three`, `@react-three/fiber` (v9), `@types/three`. `drei`, `postprocessing` et `detect-gpu` ne sont pas encore installés : rien ne les utilise (à ajouter quand une phase en a besoin).
+- **`three/SceneRoot.tsx`** (dans le layout) : monte la scène seulement sur `/`, écran ≥ 1024 px, WebGL dispo, hors reduced motion, hors « version légère ». `next/dynamic` + `ssr: false` : le chunk three (≈ 930 Ko bruts) n'est ni dans le HTML ni chargé sur mobile. Publie `ui.scene` (`loading` / `ready` / `off`) et `ui.quality`.
+- **`three/Stage.tsx`** : le seul `<Canvas>` (fixe, `-z-10`, `pointer-events: none`, `aria-hidden`, `frameloop="never"`, `dpr [1, 1.5]`, alpha). Abonné à `addFrame(…, 20)` → `advance(time / 1000)` : une seule boucle, après Lenis. Rendu à la demande : arrêt après `T_END` (+ 2 frames pour vider). Synchronise aussi le HTML sur la même frame (titre du hero, `--handoff`).
+- **`three/heroTimeline.ts`** : mesures DOM (`measure()` sur resize / ResizeObserver) et chronologie `heroT()` = `scroll.y / yEnd`. Caméra perspective `FOV 30`, `z = 10` ; `metrics.wpp` = unités monde par pixel dans le plan z = 0 (pour caler la 3D sur le DOM au pixel près).
+- **`three/HeroParticles.tsx`** : `InstancedMesh` de 1 960 quads (56 × 35), tout le mouvement est dans le vertex shader (aucune matrice recalculée en JS). Sphère de Fibonacci, taille et opacité selon la profondeur, quelques points accent sur la face avant, rotation lente + ressort amorti vers le curseur. Au scroll : la sphère grossit et se disperse (0 → 0,5), puis les particules rejoignent une grille 16:10 posée exactement sur la capture du premier projet (0,4 → 1), en prenant les couleurs de la capture (mosaïque). De 0,97 à 1,08, la mosaïque s'efface et la vraie capture HTML apparaît (`--handoff`). La vitesse du scroll étire les particules en vol.
+- **CSS** : le fond est sur `<html>` (plus sur `<body>`) pour que le canvas en z négatif reste visible. `html[data-scene="on"]` masque la sphère SVG et rend la cible transparente.
+- **Écran de démarrage** : 3e ligne « SCÈNE 3D » (OK à la première image dessinée, « NON UTILISÉE » en version légère).
+- **Vérifié** (Chrome, GPU Apple M2, build de production) : 60 images/s pendant le défilement (médiane et p95 à 16,7 ms), aller-retour du scroll (état du titre restauré), navigation vers un projet puis retour (canvas démonté puis remonté), passage sous 1024 px (retour à la sphère SVG), version légère, 0 erreur console. Seul avertissement : `THREE.Clock` déprécié, émis par R3F lui-même.
+
+## Notes pour la phase 3 (Fable 5.2)
+
+- La cible de la transition est `[data-scene-target="first-screen"]` (lien-image de la 1re carte, dans `fallback/ProjectCards`). Quand le carrousel existera, pointer la mosaïque vers l'écran actif du cylindre (mêmes `uPlane` + un éventuel `uPlaneRot`) et supprimer le relais `--handoff` en version complète.
+- Ajouter le carrousel comme second enfant du `<Canvas>` de `Stage.tsx` ; étendre la condition de rendu à la demande (aujourd'hui `t < T_END`) à la section fixée.
+- La liste `WorkList` doit rester la navigation ; en version complète, intercepter le clic pour faire défiler jusqu'au projet (`scrollToTarget`).
+- Le shader écran (barillet, lignes, grain, RGB) lit `ui.getState().scroll.velocity` (déjà lissée, en px/frame).
 
 ## Direction (5 lignes)
 

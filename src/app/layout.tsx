@@ -8,6 +8,7 @@ import { Header } from '@/components/shell/Header'
 import { Cursor } from '@/components/shell/Cursor'
 import { BootScreen } from '@/components/shell/BootScreen'
 import { bootScript } from '@/components/shell/bootScript'
+import { SceneRoot } from '@/components/three/SceneRoot'
 import { Footer } from '@/components/sections/Footer'
 import { InlineScript } from '@/components/ui/InlineScript'
 import { site } from '@/lib/constants'
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Aller au contenu
         </a>
         <ScrollEngine>
+          <SceneRoot />
           <BootScreen />
           <div id="site">
             <Header />

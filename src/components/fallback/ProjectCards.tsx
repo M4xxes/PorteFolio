@@ -33,7 +33,14 @@ export function ProjectCards() {
       {projects.map((p, i) => (
         <li key={p.id} id={`projet-${p.id}`} data-index={i} className="scroll-mt-28">
           <article aria-labelledby={`card-${p.id}`}>
-            <Link href={`/projects/${p.id}`} data-cursor="OUVRIR" tabIndex={-1} aria-hidden className="group relative block overflow-hidden bg-surface">
+            <Link
+              href={`/projects/${p.id}`}
+              data-cursor="OUVRIR"
+              data-scene-target={i === 0 ? 'first-screen' : undefined}
+              tabIndex={-1}
+              aria-hidden
+              className="screen-card group relative block overflow-hidden bg-surface"
+            >
               <Image
                 src={p.cover.src}
                 alt=""

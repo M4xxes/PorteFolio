@@ -16,6 +16,8 @@ export interface UIState {
   /** Projet actif dans la sélection, et mode d'affichage (la salle arrive en phase 4). */
   work: { active: number; mode: 'carousel' | 'room' }
   quality: Quality
+  /** État de la scène 3D : en attente, en chargement, prête, ou non utilisée (version légère). */
+  scene: 'idle' | 'loading' | 'ready' | 'off'
   /** Choix manuel « version légère » (pied de page), prioritaire sur la détection. */
   liteForced: boolean
   menuOpen: boolean
@@ -26,6 +28,7 @@ export const ui = createStore<UIState>()(() => ({
   pointer: { x: -100, y: -100, nx: 0, ny: 0 },
   work: { active: 0, mode: 'carousel' },
   quality: 'pending',
+  scene: 'idle',
   liteForced: false,
   menuOpen: false,
 }))
