@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { Component, useEffect, useState, type ReactNode } from 'react'
 import { reducedMotionQuery } from '@/lib/motion'
 import { gpuIsCapable, readLiteMode, readPerf, reportPerf, webglAvailable } from '@/lib/quality'
+import { readSound } from '@/lib/sound'
 import { ui, useUI, type LiteReason } from '@/lib/store'
 
 // three + R3F ne sont jamais dans le bundle initial : chargés après le premier rendu, côté client seulement.
@@ -38,7 +39,7 @@ export function SceneRoot() {
 
   // Préférences mémorisées : lues une fois, après l'hydratation.
   useEffect(() => {
-    ui.setState({ liteMode: readLiteMode(), perf: readPerf() })
+    ui.setState({ liteMode: readLiteMode(), perf: readPerf(), sound: readSound() })
   }, [])
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import { G } from '@/components/ui/Glyph'
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
 const fieldClass =
-  'w-full border-0 border-b border-line-strong bg-transparent px-0 py-3 text-base text-fg placeholder:text-fg-3 transition-colors outline-none focus:border-accent focus-visible:outline-none'
+  'w-full border-0 border-b border-line-strong bg-transparent px-0 py-3 text-base text-fg placeholder:text-fg-3 transition-colors outline-none focus:border-accent focus:shadow-[0_1px_0_0_var(--accent)] focus-visible:outline-none'
 
 export function ContactForm() {
   const [status, setStatus] = useState<Status>('idle')

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { G } from '@/components/ui/Glyph'
+import { blip } from '@/lib/sound'
 
 export function CopyEmail({ email }: { email: string }) {
   const [copied, setCopied] = useState(false)
@@ -10,6 +11,7 @@ export function CopyEmail({ email }: { email: string }) {
     try {
       await navigator.clipboard.writeText(email)
       setCopied(true)
+      blip('ok')
       setTimeout(() => setCopied(false), 2000)
     } catch {
       window.location.href = `mailto:${email}`

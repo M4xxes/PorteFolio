@@ -11,8 +11,8 @@ Mémoire commune entre les modèles. À relire au début de chaque phase, avec l
 | 2 — Hero 3D | Fable 5.2 | Terminée (commit `phase-2`) |
 | 3 — Carrousel 3D + shader écran | Fable 5.2 | Terminée (commit `phase-3`) |
 | 4 — Salle de contrôle + caméra | Fable 5.2 | Terminée (commit `phase-4`) |
-| 5 — Secours, mobile, a11y | Opus 5.5 | **Terminée** (commit `phase-5`) |
-| 6 — Polish | Sonnet 5.5 | À faire |
+| 5 — Secours, mobile, a11y | Opus 5.5 | Terminée (commit `phase-5`) |
+| 6 — Polish | Sonnet 5.5 | **Terminée** (commit `phase-6`) |
 | 7 — Vérification | Sonnet 5.5 | À faire |
 
 Point de départ : commit `dc33fcd` (refonte crème / orange). Elle sera remplacée par l'identité arcade.
@@ -87,12 +87,23 @@ Point de départ : commit `dc33fcd` (refonte crème / orange). Elle sera remplac
 - **Salle** : la caméra cadre la salle dans l'espace entre l'en-tête et le panneau (`setViewOffset` + recul selon la hauteur utile) : plus d'écran caché derrière le panneau sur une fenêtre basse. Sortie de la salle vers une ancre (PARLONS-EN, menu) : la page va bien à l'ancre ; sortie par Échap / FERMER : recalage sur le projet quitté. Espaces des liens « ← 01 … » rétablis.
 - **Vérifié** (Chrome, build de production) : détection auto (requête `/detect-gpu/d-apple.json` servie par le site), GPU faible simulé → version légère avec raison, bascule manuelle dans les deux sens, perte de contexte simulée → version légère « erreur 3D », reduced motion, 900 px, 375 px sans débordement (accueil, 2 pages projet, 404), carrousel mobile au doigt, parcours Tab complet avec focus visible, salle (ouverture, ← →, Échap, retour arrière, FERMER, chargement direct, ancres), méthode lue en entier, régressions des phases 1 à 4, 0 erreur console.
 
-## Notes pour la phase 6 (Sonnet 5.5)
+## Phase 6 — ce qui est fait
 
-- Les skills `emil-design-eng`, `animation-vocabulary`, `/impeccable` ne sont pas installés : travail à faire à la main, ou les installer avant.
-- Textes à relire : phrases-histoires (`lib/data/projects.ts`), méthode (`lib/data/method.ts`), à propos (`sections/About.tsx`), hero.
-- Points de polish repérés : moiré possible des lignes de balayage sur les captures très claires (Animarah) ; « Glisser ← → » sur mobile ; la page projet classique apparaît un court instant avant la salle au chargement direct.
-- Sons 8-bit (optionnels) : non faits ; « SON : OFF » est affiché sur l'écran de démarrage.
+Les skills `emil-design-eng`, `animation-vocabulary`, `/impeccable` ne sont pas installées : audit fait à la main sur le code.
+
+- **Audit des animations HTML** : toutes ≤ 280 ms (sauf transitions de caméra 3D), courbe `--ease-out` partout, `:active` à `scale(0.97)` sur les boutons (`.press`), survols limités aux pointeurs fins (variant `hover:` de Tailwind 4 + règles `@media (hover: hover)`). Corrigé : pixel de l'easter egg 300 → 240 ms ; survol des cartes 2D qui animait `filter` → calque `mix-blend-saturation` dont seule l'opacité change. Exception assumée : le curseur personnalisé anime `width/height` (élément fixe de 10–32 px, pas de reflow de page).
+- **Typographie** : seules les trois familles prévues sont utilisées (Geist Pixel titres, Departure Mono interface et lecture, Doto chiffres), aucune police interdite ; `text-wrap: balance` sur les titres, `pretty` sur les paragraphes ; aucun `border-radius` hors des coins d'écran 3D.
+- **Sons 8-bit optionnels** (`lib/sound.ts`, `shell/SoundToggle.tsx`) : « Son : OFF » par défaut dans le pied de page, choix mémorisé (`portfolio:sound`). Synthèse Web Audio (ondes carrées, volume 0,035), **aucun contexte audio créé tant que le son est OFF** (vérifié). Sons : menu (ouvrir/fermer), changement de projet dans le carrousel, entrée/sortie de la salle, easter egg, copie de l'e-mail. L'écran de démarrage affiche l'état réel (avant : « SON : OFF » figé).
+- **Accessibilité** : titre « Sélec-tion » nommé « Sélection » (`aria-label`, la coupure est visuelle) ; focus des champs du formulaire renforcé (bordure + trait de 2 px accent).
+- **Textes** : « À propos » rendu factuel (retrait d'une préférence non vérifiable, ajout des vrais projets cités et de la mention de ce qui revient à d'autres), étape « Livrer et suivre » rendue concrète (Netlify, documentation dans le dépôt). Les phrases-histoires de la phase 0 sont inchangées.
+- **Vérifié** (Chrome, build de production) : son OFF = 0 oscillateur / 0 contexte, activation, persistance, easter egg sonore, nom accessible de la sélection, survol des cartes, régressions (salle, carrousel, ancres, 375 px, reduced motion) sans erreur console.
+
+## Notes pour la phase 7 (Sonnet 5.5)
+
+- Playwright MCP non disponible ici : les vérifications se font avec `playwright-core` + Chrome système (scripts dans le scratchpad de la session, non versionnés).
+- Lighthouse mobile : à lancer sur la version légère (mobile émulé) ; cible ≥ 90, LCP < 2,5 s.
+- Formulaire de contact : testable seulement avec `RESEND_API_KEY` ; sans, il n'est pas rendu (comportement voulu).
+- À revérifier : version sans WebGL (désactiver WebGL au lancement de Chrome), 375 px, reduced motion, URL directe `/projects/[slug]`.
 
 ## Direction (5 lignes)
 

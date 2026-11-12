@@ -10,6 +10,7 @@ import { ui, useUI } from '@/lib/store'
 import { lockScroll, scrollToTarget } from './ScrollEngine'
 import { DecodeText } from './DecodeText'
 import { Clock } from './Clock'
+import { blip } from '@/lib/sound'
 import { Wordmark } from './Wordmark'
 
 /**
@@ -24,9 +25,11 @@ export function MenuOverlay() {
     const d = ref.current!
     if (open && !d.open) {
       d.showModal()
+      blip('open')
       lockScroll(true)
     } else if (!open && d.open) {
       d.dataset.closing = 'true'
+      blip('close')
       const t = setTimeout(() => {
         d.close()
         d.dataset.closing = 'false'

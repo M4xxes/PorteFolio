@@ -13,6 +13,6 @@ export const methodSteps = [
   },
   {
     title: 'Livrer et suivre',
-    text: 'Je mets en ligne, je documente l’essentiel (installation, contenu, déploiement) et je reste disponible pour les corrections.',
+    text: 'Je mets en ligne (Netlify pour mes sites), je documente l’essentiel dans le dépôt et je corrige ce qui remonte après la livraison.',
   },
 ] as const

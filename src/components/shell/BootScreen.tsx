@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { projects } from '@/lib/data/projects'
 import { BOOT_STORAGE_KEY } from '@/lib/motion'
+import { readSound } from '@/lib/sound'
 import { ui } from '@/lib/store'
 
 const MAX_MS = 1500
@@ -147,7 +148,7 @@ export function BootScreen() {
             </li>
           ))}
         </ul>
-        <p>SON : OFF</p>
+        <p>SON : {readSound() ? 'ON' : 'OFF'}</p>
       </div>
     </div>
   )

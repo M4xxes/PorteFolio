@@ -8,12 +8,14 @@ import { lockScroll, scrollToTarget } from '@/components/shell/ScrollEngine'
 import { measure, metrics } from '@/components/three/heroTimeline'
 import { room, roomActions } from '@/components/three/roomState'
 import { RoomPanel } from './RoomPanel'
+import { blip } from '@/lib/sound'
 
 const N = projects.length
 const projectUrl = (index: number) => `/projects/${projects[index].id}`
 
 /** Entrée dans la salle depuis le carrousel : l'URL change, la page reste en place. */
 export function openRoom(index: number) {
+  blip('enter')
   window.history.pushState(null, '', projectUrl(index))
 }
 
@@ -110,6 +112,7 @@ export function RoomController() {
     roomActions.close = () => {
       if (ui.getState().work.mode !== 'room') return
       room.closing = true
+      blip('back')
       if (fromHome.current && document.querySelector('[data-pinned]')) window.history.back()
       else router.push('/')
     }

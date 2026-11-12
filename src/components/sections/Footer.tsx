@@ -3,6 +3,7 @@ import { Container } from '@/components/ui/Kit'
 import { Clock } from '@/components/shell/Clock'
 import { DecodeText } from '@/components/shell/DecodeText'
 import { LiteToggle } from '@/components/shell/LiteToggle'
+import { SoundToggle } from '@/components/shell/SoundToggle'
 import { Wordmark } from '@/components/shell/Wordmark'
 import { EasterEgg } from './EasterEgg'
 
@@ -41,7 +42,10 @@ export function Footer() {
         <div className="ui mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-line pt-4 text-fg-2">
           <p>© 2026 Maxime Pero — Lyon</p>
           <Clock />
-          <LiteToggle />
+          <div className="flex flex-wrap gap-x-6">
+            <SoundToggle />
+            <LiteToggle />
+          </div>
         </div>
       </Container>
     </footer>

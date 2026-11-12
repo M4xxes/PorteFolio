@@ -64,8 +64,10 @@ export function ProjectCards() {
                 width={p.cover.width}
                 height={p.cover.height}
                 sizes="(min-width: 1024px) 60vw, 100vw"
-                className="aspect-[16/10] w-full object-cover object-left-top grayscale-[0.35] transition-[filter] duration-200 group-hover:grayscale-0"
+                className="aspect-[16/10] w-full object-cover object-left-top"
               />
+              {/* Désaturation par un calque (mix-blend) : au survol, seule l'opacité change. */}
+              <span aria-hidden className="pointer-events-none absolute inset-0 bg-[#808080] opacity-35 mix-blend-saturation transition-opacity duration-200 group-hover:opacity-0" />
               <span aria-hidden className="screen-lines absolute inset-0" />
               {p.cover.kind === 'illustration' && <span className="ui absolute left-3 top-3 bg-bg px-2 py-1 text-fg-2">Visuel</span>}
             </Link>

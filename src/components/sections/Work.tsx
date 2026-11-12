@@ -28,7 +28,7 @@ export function Work() {
         <div className="min-w-0 lg:col-span-4">
           <div className="flex flex-col gap-8 border-t border-line pt-3 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
             <Tag index="01">Travaux</Tag>
-            <h2 id="work-title" className="pixel text-[clamp(2.75rem,5vw,4.5rem)]">
+            <h2 id="work-title" aria-label="Sélection" className="pixel text-[clamp(2.75rem,5vw,4.5rem)]">
               Sélec-
               <br />
               tion

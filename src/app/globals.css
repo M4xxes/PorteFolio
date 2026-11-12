@@ -84,6 +84,10 @@ body {
   outline-offset: 3px;
 }
 
+p {
+  text-wrap: pretty;
+}
+
 html.scroll-locked {
   overflow: hidden;
 }
@@ -106,6 +110,7 @@ html.lenis body {
 
 /* Titres : Geist Pixel, capitales, interligne serré. */
 .pixel {
+  text-wrap: balance;
   font-family: var(--font-pixel);
   font-weight: 500;
   text-transform: uppercase;

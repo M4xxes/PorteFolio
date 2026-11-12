@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { projects } from '@/lib/data/projects'
+import { blip } from '@/lib/sound'
 import { setActiveProject, ui, useUI } from '@/lib/store'
 import { getLenis, scrollToTarget } from '@/components/shell/ScrollEngine'
 import { STEP_VH, measure, metrics } from '@/components/three/heroTimeline'
@@ -42,7 +43,9 @@ export function WorkStage() {
       if (s.scroll === prev.scroll || !metrics.ready) return
       const { top, range } = metrics.work
       const p = Math.min(1, Math.max(0, (s.scroll.y - top) / range))
-      setActiveProject(Math.round(p * (N - 1)))
+      const next = Math.round(p * (N - 1))
+      if (next !== s.work.active) blip('tick')
+      setActiveProject(next)
       if (Math.abs(s.scroll.velocity) > 0.3) {
         clearTimeout(timer)
         timer = window.setTimeout(snap, 180)
@@ -82,7 +85,8 @@ export function WorkStage() {
 
         <div className="absolute left-[var(--gutter)] top-[calc(var(--header-h)+1.5rem)] flex w-[min(20rem,24vw)] flex-col gap-6">
           <Tag index="01">Travaux</Tag>
-          <h2 id="work-title" className="pixel text-[clamp(2.5rem,4.2vw,3.75rem)]">
+          {/* Coupure en fin de ligne dessinée à la main : le nom accessible reste « Sélection ». */}
+          <h2 id="work-title" aria-label="Sélection" className="pixel text-[clamp(2.5rem,4.2vw,3.75rem)]">
             Sélec-
             <br />
             tion

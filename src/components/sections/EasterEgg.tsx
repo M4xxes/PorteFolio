@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { blip } from '@/lib/sound'
 
 const COLS = 32
 const ROWS = 6
@@ -29,13 +30,16 @@ export function EasterEgg() {
               <button
                 key={i}
                 type="button"
-                onClick={() => setFound(true)}
+                onClick={() => {
+                  setFound(true)
+                  blip('found')
+                }}
                 aria-label={found ? 'Pixel remis en place' : 'Un pixel est mal placé'}
                 disabled={found}
                 className="relative flex aspect-square items-center justify-center"
               >
                 <span
-                  className={`block size-[5px] transition-transform duration-300 ease-[var(--ease-out)] sm:size-1.5 ${
+                  className={`block size-[5px] transition-transform duration-[240ms] ease-[var(--ease-out)] sm:size-1.5 ${
                     found ? 'translate-x-0 translate-y-0 bg-accent' : 'translate-x-[0.5em] -translate-y-[0.35em] bg-fg-2'
                   }`}
                 />

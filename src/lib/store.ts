@@ -30,6 +30,8 @@ export interface UIState {
   /** Verdict de performance de la session : GPU trop faible, images/s trop basses, scène en erreur. */
   perf: 'unknown' | 'ok' | 'gpu' | 'fps' | 'error'
   menuOpen: boolean
+  /** Sons 8-bit activés par le visiteur (désactivés par défaut). */
+  sound: boolean
 }
 
 export const ui = createStore<UIState>()(() => ({
@@ -43,6 +45,7 @@ export const ui = createStore<UIState>()(() => ({
   liteReason: null,
   perf: 'unknown',
   menuOpen: false,
+  sound: false,
 }))
 
 export function useUI<T>(selector: (s: UIState) => T) {
