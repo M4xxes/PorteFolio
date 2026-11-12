@@ -63,7 +63,7 @@ export function ProjectVideo({ video, label, url }: { video: Video; label: strin
   return (
     <div className="border border-line bg-surface">
       <div className="ui flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 text-fg-3">
-        <span className="truncate">{url ? url.replace(/^https?:\/\//, '') : 'Visite filmée'}</span>
+        <span className="truncate">{url ? url.replace(/^https?:\/\//, '') : 'Démonstration'}</span>
         <span aria-hidden className="flex items-center gap-2">
           <span className={`size-[7px] ${playing ? 'bg-accent' : 'bg-fg-3'}`} />
           {playing ? 'LECTURE' : 'PAUSE'}

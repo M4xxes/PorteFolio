@@ -37,6 +37,8 @@ export interface Project {
   short: string
   /** Nom du dépôt public sur GitHub (sert aussi à l'enrichissement automatique). */
   repo?: string
+  /** Lien complet du dépôt quand il n'est pas sous le compte GitHub du portfolio. */
+  repoUrl?: string
   demoUrl?: string
   featured?: boolean
   /** Ambiance de l'en-tête de la page projet. */
@@ -44,7 +46,16 @@ export interface Project {
   cover: ProjectImage
   gallery?: ProjectImage[]
   /** Visite filmée du site en ligne (MP4 H.264, sans son). */
-  video?: { src: string; poster: string; width: number; height: number; duration: number }
+  video?: {
+    src: string
+    poster: string
+    width: number
+    height: number
+    duration: number
+    /** Description accessible et légende, pour une vidéo qui n'est pas une visite de site. */
+    label?: string
+    caption?: string
+  }
 }
 
 export interface SkillCategory {

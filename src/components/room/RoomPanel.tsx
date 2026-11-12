@@ -38,7 +38,7 @@ export function RoomPanel({ index }: { index: number }) {
   const screens = roomScreens(project)
   const prev = (index - 1 + N) % N
   const next = (index + 1) % N
-  const repoHref = project.repo ? `${site.github}/${project.repo}` : undefined
+  const repoHref = project.repoUrl ?? (project.repo ? `${site.github}/${project.repo}` : undefined)
 
   const look = (i: number) => {
     ui.setState({ roomFocus: focus === i ? -1 : i })

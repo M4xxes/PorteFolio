@@ -60,7 +60,7 @@ export default async function ProjectPage({ params }: Params) {
   const next = projects[(i + 1) % projects.length]
   const prevIndex = (i - 1 + projects.length) % projects.length
   const nextIndex = (i + 1) % projects.length
-  const repoHref = project.repo ? `${site.github}/${project.repo}` : undefined
+  const repoHref = project.repoUrl ?? (project.repo ? `${site.github}/${project.repo}` : undefined)
   const gallery = project.gallery ?? []
 
   let block = 0
@@ -121,8 +121,11 @@ export default async function ProjectPage({ params }: Params) {
               {project.video ? (
                 <ProjectVideo
                   video={project.video}
-                  url={project.demoUrl}
-                  label={`Visite filmée du site ${project.title} : accueil, grille des projets, page projet et visionneuse`}
+                  url={project.video.label ? undefined : project.demoUrl}
+                  label={
+                    project.video.label ??
+                    `Visite filmée du site ${project.title} : accueil, grille des projets, page projet et visionneuse`
+                  }
                 />
               ) : (
                 <div className="relative bg-surface">
@@ -139,7 +142,7 @@ export default async function ProjectPage({ params }: Params) {
               )}
               <figcaption className="ui mt-3 text-fg-3">
                 {project.video
-                  ? `Visite filmée du site en ligne — ${project.video.duration} s, sans son`
+                  ? (project.video.caption ?? `Visite filmée du site en ligne — ${project.video.duration} s, sans son`)
                   : project.cover.kind === 'screenshot'
                     ? 'Capture de l’interface réelle'
                     : 'Visuel de présentation — pas une capture de l’application'}

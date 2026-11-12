@@ -217,3 +217,8 @@ Voir le message de fin de phase 0. Intégration en phase 1 une fois validées.
 - Passage cartes → section fixée : la hauteur de la page change quand `quality` devient `full` (sous l'écran de démarrage à la première visite, sous le hero ensuite : pas de saut visible constaté).
 - Lighthouse : voir « Phase 7 ». En version complète, 60 images/s mesurées sur un Apple M2, pas sur un portable plus modeste.
 - `lucide-react` n'est plus utilisé nulle part (aucun impact sur le bundle) : peut être désinstallé.
+
+### Sélection de projets (nov. 2026)
+- Retirés de la sélection : API Marketplace, Dashboard météo, Soundboard Studio, Map. Leurs images restent dans `public/projects/` (non supprimées), inutilisées.
+- Ajouté : **NotchPack**, co-créé avec Quentin Contreau (dépôt `Tokennn/NotchPack`, site notchpack.netlify.app). Vidéo et capture reprises de quentincontreau.com. Le champ `repoUrl` permet un dépôt hors du compte M4xxes.
+- À confirmer par Maxime : sa part exacte dans NotchPack (les contributions listées sont volontairement minimales) ; la FAQ de la page NotchPack parle de « Boring Notch » (appli open source), à vérifier si NotchPack en est dérivé.
