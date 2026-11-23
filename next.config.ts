@@ -5,13 +5,15 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
-  // Le site tient désormais sur une page : les anciennes adresses mènent à la bonne section.
-  // Redirections temporaires (307), faciles à retirer.
+  // Anciennes adresses : les projets vivent sous /projets/<slug>, les autres sections sont dans l'accueil.
   redirects() {
     return [
-      { source: "/projects", destination: "/#work", permanent: false },
-      { source: "/about", destination: "/#about", permanent: false },
-      { source: "/contact", destination: "/#contact", permanent: false },
+      // Le motif exclut les points : les fichiers de /projects/*.webp|mp4 (dossier public) ne sont pas redirigés.
+      { source: "/projects/:slug([a-z0-9-]+)", destination: "/projets/:slug", permanent: true },
+      { source: "/projects", destination: "/#projets", permanent: false },
+      { source: "/projets", destination: "/#projets", permanent: false },
+      { source: "/about", destination: "/", permanent: false },
+      { source: "/contact", destination: "/", permanent: false },
     ];
   },
 };

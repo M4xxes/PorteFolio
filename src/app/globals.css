@@ -218,6 +218,13 @@ html.has-cursor textarea {
     --eye-scroll: 0px;
     --diss: 0px;
   }
+  /* Un seul écran pour l'œil (fixe) ; la page défile ensuite de 100svh pour découvrir l'accueil, fixé dessous. */
+  .eye-entry {
+    height: 200svh;
+  }
+  #projets {
+    top: 100svh !important;
+  }
   .eye-sticky {
     position: relative !important;
   }

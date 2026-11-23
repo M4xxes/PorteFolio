@@ -6,6 +6,7 @@ import { addFrame } from '@/lib/loop'
 import { ui } from '@/lib/store'
 import { reducedMotionQuery } from '@/lib/motion'
 import { DISS_VH, EYE_VH } from '@/components/intro/timing'
+import { app } from '@/components/sphere/state'
 import { Fluid } from './fluid'
 
 /* ------------------------------------------------------------------ shaders */
@@ -372,7 +373,7 @@ export default function Particles() {
         const dt = Math.min(deltaMs / 1000, 0.05)
         // Le nuage se forme dès le chargement (derrière l'œil), mais n'est dessiné que lorsque la dissolution commence.
         const y = ui.getState().scroll.y
-        const visible = y >= (EYE_VH - DISS_VH - 0.05) * window.innerHeight
+        const visible = app.offHome || y >= (EYE_VH - DISS_VH - 0.05) * window.innerHeight
 
         // Regard de la caméra : suit la souris (lerp 0,05).
         const mx = (mouse.x / w) * 2 - 1

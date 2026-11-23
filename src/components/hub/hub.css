@@ -1,51 +1,65 @@
 /* ============================================================
-   Accueil : particules WebGL plein écran + fine couche d'interface en monospace.
-   Les tokens sont locaux au hub (le reste du site garde sa palette) : changer --accent ici suffit.
+   Accueil et pages projet : fond de particules WebGL, sphère de projets, fine couche d'interface en monospace.
+   Les tokens sont portés par :root,  --accent … --line se changent ici. Ils ne servent que ces écrans (classes .hub, .sp, .proj).
+   Aucun conteneur ne crée de contexte d'empilement : les textes en `plus-lighter` se mélangent directement avec le canvas du nuage.
    ============================================================ */
-.hub {
+:root {
   --accent: #aa88ff;
   --text: #dddddd;
   --muted: #8a8a8a;
   --chip: #1c1c1c;
   --line: #2a2a2a;
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  overflow: hidden;
-  background: #000;
-  color: var(--text);
-  font-family: var(--font-hub), 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-  font-size: 13px;
-  line-height: 1.35;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  pointer-events: none;
+  --hub-font: var(--font-hub), 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --hub-serif: var(--font-serif), ui-serif, Georgia, serif;
 }
-.hub canvas#bg {
-  position: absolute;
+
+/* Nuage AXON : derrière tout le site, fond noir. */
+#bg {
+  position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
+  z-index: -1;
   display: block;
-  z-index: 0;
+  background: #000;
+  pointer-events: none;
 }
-/* Pas de contexte d'empilement ici : les textes se mélangent (plus-lighter) directement avec le canvas. */
-.hub-ui,
-.hub-body {
+
+.hub,
+.sp {
   display: contents;
 }
-.hub a {
+.hub,
+.sp,
+.proj {
+  font-family: var(--hub-font);
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.hub a,
+.proj a {
   color: inherit;
   text-decoration: none;
 }
+.hub .brand,
+.hub .counter,
+.hub .about,
+.sp > * {
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------ marque, compteur, texte */
 .hub .brand {
-  position: absolute;
+  position: fixed;
   top: 24px;
   left: 24px;
   display: flex;
   gap: 14px;
   color: #fff;
   mix-blend-mode: plus-lighter;
+  pointer-events: none;
   z-index: 3;
 }
 .hub .brand svg {
@@ -63,7 +77,7 @@
   color: var(--muted);
 }
 .hub .counter {
-  position: absolute;
+  position: fixed;
   top: 24px;
   right: 24px;
   width: 44px;
@@ -77,103 +91,14 @@
   color: #fff;
   z-index: 3;
 }
-.hub .tags {
-  position: absolute;
-  top: 120px;
-  left: 24px;
-  width: 320px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  z-index: 2;
-}
-.hub .chip {
-  background: var(--chip);
-  color: #cfcfcf;
-  padding: 5px 9px;
-  font: inherit;
-  font-size: 11px;
-  letter-spacing: inherit;
-  text-transform: inherit;
-  border: 0;
-  border-radius: 0;
-  cursor: pointer;
-}
-.hub .chip[aria-pressed='true'] {
-  background: #e6e6e6;
-  color: #000;
-}
-.hub .chip:focus-visible,
-.hub a:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 2px;
-}
-.hub .list {
-  position: absolute;
-  top: 250px;
-  left: 24px;
-  bottom: 0;
-  width: 320px;
-  overflow-y: auto;
-  scrollbar-width: none;
-  z-index: 2;
-}
-.hub .list::-webkit-scrollbar {
-  display: none;
-}
-.hub .list-inner {
-  padding-bottom: 40px;
-}
-.hub .card {
-  display: block;
-  padding: 18px 0;
-  border-top: 1px solid var(--line);
-}
-.hub .thumb {
-  position: relative;
-  height: 160px;
-  border-radius: 2px;
-  background: #0a0a0a;
-  overflow: hidden;
-}
-.hub .thumb video,
-.hub .thumb img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: left top;
-  display: block;
-}
-.hub .meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 10px;
-  font-size: 12px;
-  white-space: pre-line;
-  mix-blend-mode: plus-lighter;
-}
-.hub .meta > span:first-child {
-  color: #fff;
-}
-.hub .meta > span:last-child {
-  color: var(--muted);
-  text-align: right;
-}
-.hub .empty {
-  padding: 18px 0;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-}
 .hub .about {
-  position: absolute;
+  position: fixed;
   right: 90px;
   top: 50%;
   transform: translateY(-50%);
   width: 380px;
   mix-blend-mode: plus-lighter;
+  pointer-events: none;
   z-index: 2;
 }
 .hub .about section + section {
@@ -199,79 +124,472 @@
   display: block;
   margin: 4px 0;
   text-decoration: underline;
-  pointer-events: auto;
   transition: opacity 300ms;
 }
 .hub .about a:hover {
   opacity: 0.7;
 }
-
-/* L'interface n'est cliquable qu'une fois l'œil dissous (data-live posé par Hub). */
-.hub[data-live='true'] .tags,
-.hub[data-live='true'] .list,
+.hub a:focus-visible,
+.proj a:focus-visible,
+.proj button:focus-visible,
+.sp button:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 3px;
+}
+html[data-sphere-zoom] .hub .about {
+  opacity: 0;
+  transition: opacity 400ms;
+}
+.hub .about {
+  transition: opacity 400ms;
+}
+/* Cliquable seulement une fois l'œil dissous (data-live posé par Hub). */
 .hub[data-live='true'] .brand,
 .hub[data-live='true'] .about a {
   pointer-events: auto;
 }
 
 @media (max-width: 1100px) {
+  /* Écran moyen : la colonne passe en bas, sur deux colonnes ; la sphère reste au centre et prioritaire. */
   .hub .about {
     right: 24px;
-    width: 320px;
-  }
-}
-
-/* Mobile : le texte puis les filtres et les projets défilent dans une colonne, sous le nuage. */
-@media (max-width: 760px) {
-  .hub .about {
-    position: static;
-    transform: none;
+    left: 24px;
+    top: auto;
+    bottom: 24px;
     width: auto;
-    order: 1;
+    transform: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.6em 2.2em;
+  }
+  .hub .about section + section {
+    margin-top: 0;
   }
   .hub .about p {
     text-align: left;
+    margin-bottom: 0.6em;
   }
-  .hub-body {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
+}
+@media (max-width: 760px) {
+  /* Mobile : le texte défile sous la sphère (moitié basse de l'écran). */
+  .hub .about {
+    top: 54svh;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: block;
     overflow-y: auto;
+    padding: 12px 24px 40px;
     scrollbar-width: none;
-    padding: 52svh 24px 48px;
+    background: linear-gradient(#0000, #000a 18px);
   }
-  .hub-body::-webkit-scrollbar {
+  .hub .about::-webkit-scrollbar {
     display: none;
   }
-  .hub[data-live='true'] .hub-body {
+  .hub .about section + section {
+    margin-top: 2.2em;
+  }
+  .hub[data-live='true'] .about {
     pointer-events: auto;
-  }
-  .hub .tags {
-    position: static;
-    width: auto;
-    order: 2;
-    margin-top: 2.6em;
-  }
-  .hub .list {
-    position: static;
-    width: auto;
-    overflow: visible;
-    order: 3;
-    margin-top: 1.4em;
-  }
-  .hub .list-inner {
-    padding-bottom: 0;
   }
 }
 
-/* Reduced motion : l'œil fixe sur un écran, puis l'accueil dessous (page qui défile normalement). */
+/* ------------------------------------------------------------ sphère (canvas transparent par-dessus le nuage) */
+.sp[data-active='false'] > * {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.sp canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  pointer-events: none;
+}
+.sp-zone {
+  position: fixed;
+  left: calc(var(--zx, 50vw) - var(--zr, 260px));
+  top: calc(var(--zy, 50vh) - var(--zr, 260px));
+  width: calc(2 * var(--zr, 260px));
+  height: calc(2 * var(--zr, 260px));
+  border-radius: 50%;
+  pointer-events: none;
+  touch-action: none;
+  z-index: 0;
+}
+.sp-zone.ready {
+  pointer-events: auto;
+}
+.sp-zone.full {
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100svh;
+  border-radius: 0;
+}
+.sp-word {
+  position: fixed;
+  translate: -50% -50%;
+  font-size: 56px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: plus-lighter;
+}
+.sp-side {
+  position: fixed;
+  top: 50%;
+  overflow: hidden;
+  pointer-events: none;
+  color: #fff;
+  mix-blend-mode: plus-lighter;
+  font-size: 13px;
+}
+.sp-side > span {
+  display: block;
+  transform: translateY(100%);
+}
+.sp-side.l {
+  left: 9%;
+}
+.sp-side.r {
+  right: 9%;
+}
+.sp-count {
+  position: fixed;
+  bottom: 34px;
+  translate: -50% 0;
+  overflow: hidden;
+  font-family: var(--hub-serif);
+  font-size: 14px;
+  color: #fff;
+  pointer-events: none;
+  opacity: 0;
+}
+.sp-hint {
+  position: fixed;
+  left: 50%;
+  bottom: 34px;
+  translate: -50% 0;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--muted);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+.sp-caption {
+  position: fixed;
+  left: 50%;
+  bottom: 34px;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  text-align: center;
+  white-space: nowrap;
+}
+.sp-cap-t,
+.sp-cap-c {
+  overflow: hidden;
+}
+.sp-cap-t span,
+.sp-cap-c span {
+  display: block;
+  transform: translateY(110%);
+}
+.sp-cap-t {
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+}
+.sp-cap-c {
+  font-family: var(--hub-serif);
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: none;
+}
+.sp-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: rgb(237 237 235 / 0.92);
+  color: #0c0c0d;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 5;
+}
+.sp-open {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  translate: -50% 0;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgb(28 28 28 / 0.8);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  z-index: 4;
+}
+@media (max-width: 1100px) {
+  .sp-caption,
+  .sp-hint,
+  .sp-count {
+    bottom: auto;
+    top: 96px;
+  }
+  .sp-open {
+    bottom: auto;
+    top: 76px;
+  }
+}
+@media (max-width: 1024px) {
+  .sp-side {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .sp-word {
+    font-size: 40px;
+  }
+  .sp-caption,
+  .sp-hint,
+  .sp-count {
+    top: calc(54svh - 30px);
+  }
+  .sp-open {
+    top: calc(54svh - 60px);
+  }
+}
+
+/* ------------------------------------------------------------ page projet */
+.proj {
+  position: relative;
+  min-height: 100svh;
+  padding: 96px 24px 120px;
+  animation: proj-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes proj-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+.proj-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.proj-top {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-transform: uppercase;
+  z-index: 5;
+  pointer-events: none;
+}
+.proj-top a {
+  pointer-events: auto;
+}
+.proj-back {
+  display: inline-flex;
+  gap: 0.7em;
+  color: #fff;
+  transition: opacity 300ms;
+}
+.proj-back:hover {
+  opacity: 0.7;
+}
+.proj-title {
+  font-family: var(--hub-serif);
+  font-weight: 300;
+  font-size: clamp(2.2rem, 5.5vw, 4.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: #fff;
+  margin: 0;
+  max-width: 18ch;
+}
+.proj-meta {
+  margin-top: 14px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.proj-media {
+  margin: 40px 0 0;
+}
+.proj-media > div {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #0a0a0a;
+  max-width: 1100px;
+}
+.proj-media video,
+.proj-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.proj-media figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.proj-body {
+  display: grid;
+  grid-template-columns: minmax(0, 60ch) minmax(0, 1fr);
+  gap: 56px 64px;
+  margin-top: 72px;
+}
+.proj-body h2 {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--accent);
+  margin: 0 0 1em;
+  text-transform: uppercase;
+}
+.proj-body p,
+.proj-body li {
+  font-family: var(--hub-serif);
+  font-size: 19px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: #d6d6d6;
+  max-width: 60ch;
+}
+.proj-body p {
+  margin: 0 0 1em;
+}
+.proj-body ul {
+  margin: 0;
+  padding: 0 0 0 1.1em;
+}
+.proj-body li + li {
+  margin-top: 0.4em;
+}
+.proj-body section + section {
+  margin-top: 2.6em;
+}
+.proj-side section + section {
+  margin-top: 2.2em;
+}
+.proj-side dl {
+  margin: 0;
+  text-transform: uppercase;
+}
+.proj-side dt {
+  color: var(--muted);
+}
+.proj-side dd {
+  margin: 2px 0 1em;
+  color: #fff;
+}
+.proj-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.proj-chips span {
+  background: var(--chip);
+  color: #cfcfcf;
+  padding: 5px 9px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.proj-links a {
+  display: block;
+  margin: 4px 0;
+  text-decoration: underline;
+  text-transform: uppercase;
+  transition: opacity 300ms;
+}
+.proj-links a:hover {
+  opacity: 0.7;
+}
+.proj-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 72px;
+}
+.proj-gallery figure {
+  margin: 0;
+}
+.proj-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: #0a0a0a;
+}
+.proj-gallery figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.proj-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  text-transform: uppercase;
+}
+.proj-nav a {
+  display: block;
+  transition: opacity 300ms;
+}
+.proj-nav a:hover {
+  opacity: 0.7;
+}
+.proj-nav small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+.proj-nav a:last-child {
+  text-align: right;
+}
+@media (max-width: 860px) {
+  .proj {
+    padding-top: 88px;
+  }
+  .proj-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .proj-gallery {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Reduced motion : œil fixe sur un écran, puis l'accueil dessous ; nuage figé. */
 @media (prefers-reduced-motion: reduce) {
-  .hub {
-    position: relative;
-    height: 100svh;
-    min-height: 640px;
-    pointer-events: auto;
+  .proj {
+    animation: none;
   }
 }

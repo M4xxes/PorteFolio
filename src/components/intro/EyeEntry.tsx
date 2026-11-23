@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { addFrame } from '@/lib/loop'
 import { ui } from '@/lib/store'
 import { DISS_VH, EYE_VH } from './timing'
+import { app } from '@/components/sphere/state'
 import { DISSOLVE_END, EYE_END, EYE_OPEN_T, createEyeScrub } from './eyeScrub'
 
 const ART = [
@@ -78,6 +79,8 @@ export function EyeEntry() {
       }
     }
 
+    // Retour d'une page projet : on atterrit directement sur la sphère, sans rejouer l'entrée.
+    if (app.introDone && window.scrollY < 10) window.scrollTo(0, EYE_VH * window.innerHeight)
     type()
     let t = 0
     let first = true
@@ -87,7 +90,7 @@ export function EyeEntry() {
     let away = false
     let hidden = false
     const born = performance.now()
-    const intro = ui.getState().scroll.y < 10 || window.scrollY < 10
+    const intro = window.scrollY < 10
 
     const draw = (force: boolean, td: number) => {
       if (force || t !== lastT || td !== lastTd) {
@@ -161,7 +164,7 @@ export function EyeEntry() {
   }, [])
 
   return (
-    <section id="top" aria-label="Introduction" className="eye-entry relative">
+    <section id="top" aria-label="Introduction" className="eye-entry pointer-events-none relative">
       <div className="eye-sticky pointer-events-none sticky top-0 z-20 h-svh overflow-hidden">
         <canvas ref={canvas} aria-hidden className="absolute inset-0 h-full w-full" />
         <h1 className="sr-only">Maxime Pero — développeur web</h1>

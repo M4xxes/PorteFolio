@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Doto, JetBrains_Mono } from 'next/font/google'
+import { Doto, JetBrains_Mono, Newsreader } from 'next/font/google'
 import localFont from 'next/font/local'
 // Import ciblé : `geist/font/pixel` déclarerait (et préchargerait) les 5 variantes de la police.
 import { GeistPixelSquare } from 'geist/font/pixel/square'
@@ -7,6 +7,7 @@ import './globals.css'
 import { ScrollEngine } from '@/components/shell/ScrollEngine'
 import { Header } from '@/components/shell/Header'
 import { Cursor } from '@/components/shell/Cursor'
+import { Stage } from '@/components/stage/Stage'
 import { ChromeGate } from '@/components/shell/ChromeGate'
 import { bootScript } from '@/components/shell/bootScript'
 import { Footer } from '@/components/sections/Footer'
@@ -32,6 +33,15 @@ const doto = Doto({
 const hubMono = JetBrains_Mono({
   variable: '--font-hub',
   subsets: ['latin'],
+  display: 'swap',
+})
+
+// Serif des titres et descriptions des pages projet.
+const serif = Newsreader({
+  variable: '--font-serif',
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  weight: ['300', '400', '500'],
   display: 'swap',
 })
 
@@ -70,7 +80,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     // suppressHydrationWarning : le script de démarrage pose `class="js"` sur <html> avant l'hydratation.
-    <html lang="fr" suppressHydrationWarning className={`${GeistPixelSquare.variable} ${departure.variable} ${doto.variable} ${hubMono.variable}`}>
+    <html lang="fr" suppressHydrationWarning className={`${GeistPixelSquare.variable} ${departure.variable} ${doto.variable} ${hubMono.variable} ${serif.variable}`}>
       <head>
         <InlineScript html={bootScript} />
       </head>
@@ -82,6 +92,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Aller au contenu
         </a>
         <ScrollEngine>
+          <Stage />
           <div id="site">
             <ChromeGate>
               <Header />
