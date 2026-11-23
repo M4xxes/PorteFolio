@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Doto } from 'next/font/google'
+import { Doto, JetBrains_Mono } from 'next/font/google'
 import localFont from 'next/font/local'
 // Import ciblé : `geist/font/pixel` déclarerait (et préchargerait) les 5 variantes de la police.
 import { GeistPixelSquare } from 'geist/font/pixel/square'
@@ -7,10 +7,8 @@ import './globals.css'
 import { ScrollEngine } from '@/components/shell/ScrollEngine'
 import { Header } from '@/components/shell/Header'
 import { Cursor } from '@/components/shell/Cursor'
-import { BootScreen } from '@/components/shell/BootScreen'
+import { ChromeGate } from '@/components/shell/ChromeGate'
 import { bootScript } from '@/components/shell/bootScript'
-import { SceneRoot } from '@/components/three/SceneRoot'
-import { RoomController } from '@/components/room/RoomController'
 import { Footer } from '@/components/sections/Footer'
 import { InlineScript } from '@/components/ui/InlineScript'
 import { site } from '@/lib/constants'
@@ -30,17 +28,24 @@ const doto = Doto({
   display: 'swap',
 })
 
+// Police de l'accueil (interface en monospace), auto-hébergée par next/font.
+const hubMono = JetBrains_Mono({
+  variable: '--font-hub',
+  subsets: ['latin'],
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — développeur full-stack à Lyon`,
+    default: `${site.name} — développeur web à Lyon`,
     template: `%s — ${site.name}`,
   },
   description: site.description,
   applicationName: `${site.name} — Portfolio`,
   authors: [{ name: site.name, url: site.github }],
   creator: site.name,
-  keywords: ['Maxime Pero', 'développeur full-stack', 'creative developer', 'Lyon', 'React', 'TypeScript', 'Node.js', 'portfolio', 'freelance', 'CDI'],
+  keywords: ['Maxime Pero', 'Maxxes', 'développeur web', 'développeur full-stack', 'creative developer', 'Lyon', 'React', 'TypeScript', 'Node.js', 'portfolio', 'freelance', 'CDI'],
   alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
@@ -64,8 +69,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    // suppressHydrationWarning : le script de démarrage pose `class="js"` et `data-boot` sur <html> avant l'hydratation.
-    <html lang="fr" suppressHydrationWarning className={`${GeistPixelSquare.variable} ${departure.variable} ${doto.variable}`}>
+    // suppressHydrationWarning : le script de démarrage pose `class="js"` sur <html> avant l'hydratation.
+    <html lang="fr" suppressHydrationWarning className={`${GeistPixelSquare.variable} ${departure.variable} ${doto.variable} ${hubMono.variable}`}>
       <head>
         <InlineScript html={bootScript} />
       </head>
@@ -77,17 +82,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Aller au contenu
         </a>
         <ScrollEngine>
-          <SceneRoot />
-          <BootScreen />
           <div id="site">
-            <Header />
+            <ChromeGate>
+              <Header />
+            </ChromeGate>
             {children}
-            <Footer />
+            <ChromeGate>
+              <Footer />
+            </ChromeGate>
           </div>
-          <RoomController />
-          <Cursor />
+          <ChromeGate>
+            <Cursor />
+          </ChromeGate>
         </ScrollEngine>
-        <div aria-hidden className="grain" />
+        <ChromeGate>
+          <div aria-hidden className="grain" />
+        </ChromeGate>
       </body>
     </html>
   )

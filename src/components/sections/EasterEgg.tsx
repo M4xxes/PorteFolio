@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { site } from '@/lib/constants'
 import { useState } from 'react'
 import { blip } from '@/lib/sound'
 
@@ -55,7 +55,7 @@ export function EasterEgg() {
       <p role="status" className={`ui mt-4 min-h-5 ${found ? 'text-fg' : 'text-transparent'}`}>
         {found && (
           <>
-            BIEN VU. <Link href="/#contact" className="border-b border-accent hover:text-accent">ON EN PARLE ?</Link>
+            BIEN VU. <a href={`mailto:${site.email}`} className="border-b border-accent hover:text-accent">ON EN PARLE ?</a>
           </>
         )}
       </p>

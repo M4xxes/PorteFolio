@@ -11,14 +11,12 @@ export const site = {
   location: 'Lyon, France',
   availability: 'Ouvert au CDI et aux missions freelance',
   description:
-    'Portfolio de Maxime Pero, développeur full-stack à Lyon : sites et applications web en React, TypeScript et Node.js, du site vitrine à l’écran de supervision industrielle.',
+    'Maxime Pero (Maxxes), développeur web à Lyon, étudiant en B3 Informatique à YNOV : sites et applications web en React, TypeScript et Node.js, du site vitrine à l’écran de supervision industrielle.',
   // Netlify expose l'URL de production dans `URL` au moment du build.
   url: process.env.NEXT_PUBLIC_SITE_URL ?? process.env.URL ?? 'http://localhost:3000',
 }
 
 export const navLinks = [
   { href: '/#top', label: 'Accueil', index: '00' },
-  { href: '/#work', label: 'Projets', index: '01' },
-  { href: '/#about', label: 'À propos', index: '02' },
-  { href: '/#contact', label: 'Contact', index: '03' },
+  { href: '/#projets', label: 'Projets', index: '01' },
 ] as const

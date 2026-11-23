@@ -201,25 +201,26 @@ html.has-cursor textarea {
 }
 
 /* ============================================================
-   Écran de démarrage
-   Masqué par défaut (sans JavaScript, il n'apparaît jamais) ;
-   le script en ligne pose data-boot="on" avant le premier rendu.
+   Entrée : l'œil en caractères, fixé pendant EYE_VH hauteurs d'écran (voir heroTimeline.ts).
+   --diss : dernière hauteur de ce défilement, occupée par la dissolution en pixels.
+   La section des projets remonte de (100svh + --diss) sous l'œil pour que la dissolution la révèle.
+   Reduced motion : l'œil est fixe, sur un seul écran, et les projets viennent juste dessous.
    ============================================================ */
-.boot {
-  display: none;
+:root {
+  --eye-scroll: 400svh;
+  --diss: 100svh;
 }
-html[data-boot='on'] .boot {
-  display: flex;
+.eye-entry {
+  height: calc(100svh + var(--eye-scroll));
 }
-html[data-boot='on'] {
-  overflow: hidden;
-}
-.boot[data-leaving='true'] {
-  opacity: 0;
-  transform: translateY(-2%);
-  transition:
-    opacity 280ms var(--ease-out),
-    transform 280ms var(--ease-out);
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --eye-scroll: 0px;
+    --diss: 0px;
+  }
+  .eye-sticky {
+    position: relative !important;
+  }
 }
 
 /* ============================================================
@@ -343,12 +344,6 @@ html[data-boot='on'] {
   padding: 0 12px;
 }
 
-/* Lignes de balayage fines (version HTML de l'effet écran). */
-.screen-lines {
-  pointer-events: none;
-  background: repeating-linear-gradient(to bottom, rgba(12, 12, 14, 0.22) 0 1px, transparent 1px 4px);
-}
-
 /* Révélation en cascade (uniquement avec JavaScript). */
 .js .stagger > * {
   opacity: 0;
@@ -371,45 +366,4 @@ html[data-boot='on'] {
 /* Ancres : les sections s'arrêtent sous l'en-tête fixe (défilement natif, sans Lenis). */
 section[id] {
   scroll-margin-top: var(--header-h);
-}
-
-/* ============================================================
-   Scène 3D (phase 2)
-   data-scene="on" est posé quand le canvas a dessiné sa première image.
-   ============================================================ */
-html[data-scene='on'] [data-scene='hero'] > svg {
-  visibility: hidden;
-}
-/* Écran actif du carrousel : même rectangle que `screenRect()` côté 3D. */
-.screen-rect {
-  position: absolute;
-  left: 58%;
-  top: 50%;
-  width: min(42vw, 99.2vh);
-  aspect-ratio: 16 / 10;
-  translate: -50% -50%;
-}
-/* La capture HTML du projet actif s'efface quand l'écran 3D est là. */
-html[data-scene='on'] .screen-fallback {
-  opacity: 0;
-}
-
-/* ============================================================
-   Salle de contrôle (phase 4)
-   ============================================================ */
-.room-flash {
-  background-color: #2a2a2e;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.93 0 0 0 0 0.91 0 0 0 1.6 -0.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-.room-panel {
-  animation: room-panel-in 280ms var(--ease-out) 620ms both;
-}
-.room-panel[data-instant='true'] {
-  animation-delay: 0ms;
-}
-@keyframes room-panel-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
 }

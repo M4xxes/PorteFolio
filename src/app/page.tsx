@@ -1,10 +1,6 @@
 import { site } from '@/lib/constants'
-import { Hero } from '@/components/sections/Hero'
-import { Work } from '@/components/sections/Work'
-import { Method } from '@/components/sections/Method'
-import { Skills } from '@/components/sections/Skills'
-import { About } from '@/components/sections/About'
-import { Contact } from '@/components/sections/Contact'
+import { EyeEntry } from '@/components/intro/EyeEntry'
+import { Hub } from '@/components/hub/Hub'
 import { PageTransition } from '@/components/ui/PageTransition'
 
 const personJsonLd = {
@@ -27,12 +23,8 @@ export default function Home() {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd).replace(/</g, '\\u003c') }}
         />
-        <Hero />
-        <Work />
-        <Method />
-        <Skills />
-        <About />
-        <Contact />
+        <EyeEntry />
+        <Hub />
       </main>
     </PageTransition>
   )

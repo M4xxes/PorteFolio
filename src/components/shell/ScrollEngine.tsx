@@ -13,6 +13,17 @@ export function getLenis() {
   return lenisInstance
 }
 
+type Guard = (deltaY: number) => boolean
+let guard: Guard | null = null
+
+/**
+ * Filtre du défilement de la page : renvoie false pour laisser un événement de molette au navigateur
+ * (par exemple la liste de projets de l'accueil, qui défile seule tant qu'elle n'est pas tout en haut).
+ */
+export function setScrollGuard(g: Guard | null) {
+  guard = g
+}
+
 const locks = new Set<string>()
 
 /** Bloque / rétablit le défilement. Chaque demandeur (menu, salle…) a sa clé : on ne débloque que quand tous ont relâché. */
@@ -57,6 +68,7 @@ export function ScrollEngine({ children }: { children: React.ReactNode }) {
         // Les ancres s'arrêtent sous l'en-tête fixe grâce à `scroll-margin-top` (globals.css), que Lenis respecte.
         anchors: true,
         lerp: 0.1,
+        virtualScroll: (e) => (guard ? guard(e.deltaY) : true),
         // Les zones qui défilent elles-mêmes (formulaire, menu) gardent le défilement natif.
         prevent: (node) => node.closest?.('[data-lenis-prevent]') != null,
       })

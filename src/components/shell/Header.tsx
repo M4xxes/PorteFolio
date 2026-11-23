@@ -6,11 +6,10 @@ import { ScrollBar, ScrollPercent } from './ScrollReadout'
 import { DecodeText } from './DecodeText'
 import { Wordmark } from './Wordmark'
 import { useUI, ui } from '@/lib/store'
-import { roomActions } from '@/components/three/roomState'
+import { site } from '@/lib/constants'
 
 export function Header() {
   const open = useUI((s) => s.menuOpen)
-  const inRoom = useUI((s) => s.work.mode === 'room')
 
   return (
     <>
@@ -24,16 +23,10 @@ export function Header() {
             <Wordmark />
           </Link>
 
-          {inRoom ? (
-            <button id="room-close" type="button" onClick={() => roomActions.close()} aria-label="Fermer le projet et revenir aux projets" className="ui invert-hover press inline-flex min-h-11 items-center px-3.5">
-              &gt; FERMER &lt;
-            </button>
-          ) : (
-            <ScrollPercent className="hidden md:block" />
-          )}
+          <ScrollPercent className="hidden md:block" />
 
           <nav aria-label="Raccourcis" className="flex items-center gap-1">
-            <Link href="/#contact" className="ui invert-hover hidden min-h-11 items-center gap-2.5 px-3.5 sm:inline-flex">
+            <Link href={`mailto:${site.email}`} className="ui invert-hover hidden min-h-11 items-center gap-2.5 px-3.5 sm:inline-flex">
               <DecodeText text="PARLONS-EN" />
               <span aria-hidden className="size-[7px] bg-accent" />
             </Link>

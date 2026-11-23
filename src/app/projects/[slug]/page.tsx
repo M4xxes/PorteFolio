@@ -72,7 +72,7 @@ export default async function ProjectPage({ params }: Params) {
         <article>
           <Container as="header" className="pt-3">
             <div className="ui flex flex-wrap items-center justify-between gap-4 text-fg-2">
-              <Link href="/#work" aria-label="Fermer : retour aux projets" className="nudge inline-flex min-h-11 items-center gap-[0.6em]">
+              <Link href="/#projets" aria-label="Fermer : retour aux projets" className="nudge inline-flex min-h-11 items-center gap-[0.6em]">
                 &gt; FERMER &lt;
               </Link>
               <p>

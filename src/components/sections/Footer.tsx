@@ -2,7 +2,6 @@ import { site } from '@/lib/constants'
 import { Container } from '@/components/ui/Kit'
 import { Clock } from '@/components/shell/Clock'
 import { DecodeText } from '@/components/shell/DecodeText'
-import { LiteToggle } from '@/components/shell/LiteToggle'
 import { SoundToggle } from '@/components/shell/SoundToggle'
 import { Wordmark } from '@/components/shell/Wordmark'
 import { EasterEgg } from './EasterEgg'
@@ -44,7 +43,6 @@ export function Footer() {
           <Clock />
           <div className="flex flex-wrap gap-x-6">
             <SoundToggle />
-            <LiteToggle />
           </div>
         </div>
       </Container>
