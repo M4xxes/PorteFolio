@@ -16,7 +16,7 @@ const ART = [
 ]
 const LINES = [
   '> Maxime Pero (Maxxes)',
-  '> Développeur web — B3 Informatique @ YNOV',
+  '> Développeur web full-stack',
   '> Lyon, France',
   '> github.com/M4xxes',
   '> défiler pour entrer',

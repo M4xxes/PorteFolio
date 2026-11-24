@@ -50,9 +50,9 @@ export default async function ProjectPage({ params }: Params) {
     <main id="main" className="proj">
       <EscBack />
       <div className="proj-top">
-        <Link href="/#projets" className="proj-back">
+        <a href="/#projets" className="proj-back">
           <span aria-hidden>←</span> Retour aux projets
-        </Link>
+        </a>
         <span style={{ color: 'var(--muted)' }}>
           {pad(i)} / {String(projects.length).padStart(2, '0')}
         </span>
@@ -163,10 +163,10 @@ export default async function ProjectPage({ params }: Params) {
             <small>← précédent</small>
             {prev.title}
           </Link>
-          <Link href="/#projets">
+          <a href="/#projets">
             <small>retour</small>
             Aux projets
-          </Link>
+          </a>
           <Link href={`/projets/${next.id}`}>
             <small>suivant →</small>
             {next.title}

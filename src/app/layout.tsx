@@ -48,7 +48,7 @@ const serif = Newsreader({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — développeur web à Lyon`,
+    default: `${site.name} — développeur web full-stack à Lyon`,
     template: `%s — ${site.name}`,
   },
   description: site.description,

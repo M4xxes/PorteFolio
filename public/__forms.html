@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="utf-8" /><title>Formulaires (détection Netlify)</title></head>
+  <body>
+    <!-- Formulaire statique : Netlify le détecte au build ; le vrai formulaire est dans src/components/about/ContactBlock.tsx. -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <select name="subject"><option value=""></option></select>
+      <textarea name="message"></textarea>
+      <input type="text" name="bot-field" />
+    </form>
+  </body>
+</html>
