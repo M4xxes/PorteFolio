@@ -25,6 +25,13 @@
   --gutter: clamp(1rem, 3.4vw, 3rem);
   --header-h: 4.5rem;
 
+  /* Palette de l'intro (œil) : violet, noir, blanc. */
+  --intro-bg: #0a0a0f;
+  --intro-primary: #7c3aed;
+  --intro-primary-light: #a855f7;
+  --intro-primary-dark: #4c1d95;
+  --intro-text: #fafafa;
+
   color-scheme: dark;
 }
 

@@ -170,11 +170,11 @@ export function EyeEntry() {
         <h1 className="sr-only">Maxime Pero — développeur web</h1>
         <div
           ref={term}
-          className="absolute bottom-6 left-[var(--gutter)] max-w-[calc(100%-2*var(--gutter))] bg-bg/75 p-3 backdrop-blur-[2px] sm:bottom-8"
+          className="absolute bottom-6 left-[var(--gutter)] max-w-[calc(100%-2*var(--gutter))] bg-[var(--intro-bg)]/75 p-3 backdrop-blur-[2px] sm:bottom-8"
           style={{ fontFamily: 'var(--font-departure), ui-monospace, monospace' }}
         >
           <span className="sr-only">{LINES.slice(0, 4).join('. ').replaceAll('> ', '')}</span>
-          <pre aria-hidden className="m-0 whitespace-pre-wrap text-[11px] leading-[1.45] text-fg sm:text-[13px]">
+          <pre aria-hidden className="m-0 whitespace-pre-wrap text-[11px] leading-[1.45] text-[var(--intro-text)] sm:text-[13px]">
             <span ref={caret} className="caret">
               _
             </span>

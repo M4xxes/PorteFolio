@@ -195,7 +195,7 @@ export default function Particles() {
     }
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     renderer.setPixelRatio(dpr)
-    renderer.setClearColor(0x000000, 1)
+    renderer.setClearColor(0x0a0a0f, 1) // = --intro-bg de l'intro : pas de coupure à la dissolution
     const floatOk = renderer.extensions.has('EXT_color_buffer_float')
     if (!floatOk) console.warn('EXT_color_buffer_float absent : positions en demi-flottants (précision réduite).')
 

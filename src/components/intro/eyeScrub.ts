@@ -106,13 +106,24 @@ type Particle = { x: number; y: number; vx: number; vy: number; s: number; color
 
 
 export function createEyeScrub(view: HTMLCanvasElement): EyeHandle {
-  const BG = hex('#0c0907')
-  const ACCENT = hex('#f2804a')
-  const CREAM = hex('#f3ead8')
-  const WHITE: RGB = [255, 255, 255]
-  const deep = mix(ACCENT, BG, 0.8)
-  const orange = ramp([deep, mix(ACCENT, [0, 0, 0], 0.38), ACCENT, mix(ACCENT, WHITE, 0.5), WHITE])
-  const cream = ramp([deep, mix(CREAM, BG, 0.62), CREAM, WHITE])
+  // Palette = tokens CSS de globals.css (--intro-bg, --intro-primary…), avec repli identique.
+  const tok = (name: string, fallback: string) => {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+    return /^#[0-9a-f]{6}$/i.test(v) ? v : fallback
+  }
+  const BG = hex(tok('--intro-bg', '#0a0a0f'))
+  const PRIMARY = hex(tok('--intro-primary', '#7c3aed'))
+  const LIGHT_HEX = tok('--intro-primary-light', '#a855f7')
+  const PRIMARY_LIGHT = hex(LIGHT_HEX)
+  const PRIMARY_DARK = hex(tok('--intro-primary-dark', '#4c1d95'))
+  const PRIMARY_HEX = tok('--intro-primary', '#7c3aed')
+  const TEXT_C = hex(tok('--intro-text', '#fafafa'))
+  const WHITE: RGB = TEXT_C
+  const deep = mix(PRIMARY_DARK, BG, 0.75)
+  // Iris, orbite, paupières : du violet sombre au violet clair (centre de l'iris).
+  const orange = ramp([deep, PRIMARY_DARK, PRIMARY, PRIMARY_LIGHT, mix(PRIMARY_LIGHT, WHITE, 0.35)])
+  // Boîtier, contours, reflets : blanc.
+  const cream = ramp([deep, mix(WHITE, BG, 0.62), WHITE, WHITE])
 
   const mk = () => document.createElement('canvas')
   const frame = mk()
@@ -297,7 +308,7 @@ export function createEyeScrub(view: HTMLCanvasElement): EyeHandle {
           if ((wx < 0.14 && wy < 0.14 && wx > 0.011 && wy > 0.011) || Math.hypot(u - 0.3, v - 0.28) < 0.06) {
             oRamp = 1
             oPos = 1
-            oB = 1
+            oB = 0.85
           }
         }
       }
@@ -406,8 +417,8 @@ export function createEyeScrub(view: HTMLCanvasElement): EyeHandle {
         const tw = 0.65 + 0.35 * Math.sin(age * s.freq * Math.PI * 2 + s.phase)
         const size = s.size * (0.75 + 0.25 * tw) * fadeIn
         if (size < 2) continue
-        const col = css(mix(ACCENT, hex('#ffe6cf'), clamp01(age / 0.9)))
-        f.globalAlpha = fadeIn * tw
+        const col = css(mix(PRIMARY, PRIMARY_LIGHT, clamp01(age / 0.9)))
+        f.globalAlpha = fadeIn * tw * 0.6
         f.fillStyle = col
         f.shadowColor = col
         f.shadowBlur = 4 + 0.35 * size
@@ -426,7 +437,7 @@ export function createEyeScrub(view: HTMLCanvasElement): EyeHandle {
       f.globalAlpha = a
       f.fillStyle = css(deep)
       f.fillRect(16, H - 42, w, 4)
-      f.fillStyle = css(ACCENT)
+      f.fillStyle = css(PRIMARY)
       f.fillRect(16, H - 42, w * p, 4)
       f.globalAlpha = 1
     }
@@ -503,7 +514,7 @@ export function createEyeScrub(view: HTMLCanvasElement): EyeHandle {
       for (let k = 0; k < n; k++)
         particles.push({
           x: s.nx * W, y: s.ny * H, s: 2 + Math.random() * 3,
-          color: Math.random() < 0.5 ? '#ffffff' : '#ffd2b8',
+          color: Math.random() < 0.5 ? LIGHT_HEX : PRIMARY_HEX,
           vx: (Math.random() * 2 - 1) * 140, vy: -(60 + Math.random() * 220), delay, glow: true,
         })
     }
